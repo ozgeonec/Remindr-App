@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Remindr</string>
+    <string name="remind_me_">remind me..</string>
+    <string name="_00_00_00">00/00/00</string>
+    <string name="bell">bell</string>
+    <string name="repeat">repeat</string>
+    <string name="add">add</string>
+    <string name="clock">clock</string>
+    <string name="calendar">calendar</string>
+    <string name="hint">remind me...</string>
+    <string name="tagicon">tagicon</string>
+</resources>
