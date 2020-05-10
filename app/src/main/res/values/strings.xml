@@ -9,4 +9,5 @@
     <string name="calendar">calendar</string>
     <string name="hint">remind me...</string>
     <string name="tagicon">tagicon</string>
+    <string name="_00_00">00:00</string>
 </resources>
