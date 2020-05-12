@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "514991444874",
+    "firebase_url": "https://remindr-a8989.firebaseio.com",
+    "project_id": "remindr-a8989",
+    "storage_bucket": "remindr-a8989.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:514991444874:android:38a085bb4772c47d8bae73",
+        "android_client_info": {
+          "package_name": "com.hfad.reminderapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "514991444874-2fgngbek5bh946o8deidto80d4iudhjr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCLPaA0kLByWYRMzUxPXv4f4_L8FlrfgSo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "514991444874-2fgngbek5bh946o8deidto80d4iudhjr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

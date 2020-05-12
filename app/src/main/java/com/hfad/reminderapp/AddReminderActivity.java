@@ -1,4 +1,7 @@
 package com.hfad.reminderapp;
+/**
+ * @author ozgeonec
+ */
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -13,21 +16,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import java.util.Calendar;
+import java.util.Objects;
 
 public class AddReminderActivity extends AppCompatActivity {
 
-    private TextView remindMe;
+    private EditText remindMe;
     private TextView clockDisplay;
     private TextView dateDisplay;
     private String remindText;
+    private String numberText;
     private ImageButton calendarButton;
     private ImageButton clockButton;
-    //private ImageButton bellButton;
     //private ImageButton repeatButton;
     //private ImageButton addButton;
     private DatePickerDialog.OnDateSetListener dateSetListener;
     private TimePickerDialog.OnTimeSetListener timePickerListener;
     //String amPm;
+    private Spinner tagChoice;
+    private Spinner repeatChoice;
 
 
     @Override
@@ -39,11 +45,12 @@ public class AddReminderActivity extends AppCompatActivity {
         remindMe = (EditText)findViewById(R.id.remind_me);
         calendarButton = (ImageButton)findViewById(R.id.calendarbutton);
         clockButton = (ImageButton)findViewById(R.id.clockbutton);
-        //bellButton = (ImageButton)findViewById(R.id.bellbutton);
         //repeatButton = (ImageButton)findViewById(R.id.repeatbutton);
         //addButton = (ImageButton)findViewById(R.id.addbutton);
         dateDisplay = (TextView)findViewById(R.id.dateDisplay);
         clockDisplay = (TextView)findViewById(R.id.clocktext);
+        tagChoice = (Spinner)findViewById(R.id.tagchoices);
+        repeatChoice = (Spinner)findViewById(R.id.repeatchoice);
 
         //Setup Reminder Title
         remindMe.addTextChangedListener(new TextWatcher() {
@@ -62,7 +69,8 @@ public class AddReminderActivity extends AppCompatActivity {
 
             }
         });
-        //date setting
+
+        //Date Setting
         calendarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,7 +96,7 @@ public class AddReminderActivity extends AppCompatActivity {
                 dateDisplay.setText(date);
             }
         };
-        //time setting
+        //Time Setting
        clockButton.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
@@ -97,35 +105,48 @@ public class AddReminderActivity extends AppCompatActivity {
                int minute=cal.get(Calendar.MINUTE);
                TimePickerDialog dialog2 = new TimePickerDialog(AddReminderActivity.this,
                        android.R.style.Theme_Material_Dialog_MinWidth,timePickerListener,minute,hour,false);
-               dialog2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.RED));
+               Objects.requireNonNull(dialog2.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.RED));
                dialog2.show();
            }
        });
        timePickerListener = new TimePickerDialog.OnTimeSetListener() {
            @Override
            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-              /* if (hourOfDay >= 12) {
-                   amPm = "PM";
-               } else {
-                   amPm = "AM";
-               }*/
                clockDisplay.setText(hourOfDay + ":" + minute);
            }
        };
+       //Tag choice
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.tag_choices, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
+        tagChoice.setAdapter(adapter);
+        addListenerOnSpinnerItemSelection();
+        addListenerOnButton();
 
-
-
-
-
-
-
-
-
-
-
-
+        //Repeat Choice
+        ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(this,
+                R.array.repeatchoices, android.R.layout.simple_spinner_item);
+        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        repeatChoice.setAdapter(adapter2);
     }
 
 
+
+    //Spinner functions
+    public void addListenerOnSpinnerItemSelection(){
+
+        tagChoice.setOnItemSelectedListener(new SpinnerActivity());
+        repeatChoice.setOnItemSelectedListener(new SpinnerActivity());
+    }
+    public void addListenerOnButton(){
+        tagChoice = (Spinner)findViewById(R.id.tagchoices);
+        repeatChoice = (Spinner)findViewById(R.id.repeatchoice);
+
+
+        Toast.makeText(AddReminderActivity.this,
+                "On Button Click : " +
+                        "\n" + String.valueOf(tagChoice.getSelectedItem()) ,
+                Toast.LENGTH_LONG).show();
+    }
 }
