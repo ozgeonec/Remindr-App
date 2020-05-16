@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Remindr</string>
+    <string name="title_activity_add_reminder">Add Reminder</string>
+    <string name="title_activity_edit_reminder">Edit Reminder</string>
     <string name="remind_me_">remind me..</string>
     <string name="_00_00_00">00/00/00</string>
     <string name="bell">bell</string>
@@ -23,5 +25,9 @@
             <item>Personal</item>
             <item>Health</item>
     </string-array>
+    <string name="repeat3">Repeat</string>
+    <string name="repeat_off">Off</string>
+    <string name="repeat_no">Repetition Interval </string>
+    <string name="repeat_type">Type of Repetitions</string>
 
 </resources>
