@@ -45,16 +45,19 @@ public class AddReminderActivity extends AppCompatActivity {
     private String mRepeat;
     private String mRepeatNmbr;
     private String mRepeatType;
+    private String mTag;
     //private String numberText;
     private long mRepeatTime;
     private Switch repeatSwitch;
-    private Toolbar toolbar;
+    private TextView everyText;
+
     // Constant values in milliseconds
     private static final long milMinute = 60000L;
     private static final long milHour = 3600000L;
     private static final long milDay = 86400000L;
     private static final long milWeek = 604800000L;
     private static final long milMonth = 2592000000L;
+    private static final long milYear = 155520000000L;
 
 
 
@@ -64,7 +67,7 @@ public class AddReminderActivity extends AppCompatActivity {
         setContentView(R.layout.activity_addreminder);
 
         //Initialize Views
-        toolbar = (Toolbar)findViewById(R.id.toolbar);
+
         remindMe = (EditText)findViewById(R.id.remind_me);
         calendarButton = (ImageButton)findViewById(R.id.calendarbutton);
         clockButton = (ImageButton)findViewById(R.id.clockbutton);
@@ -78,12 +81,9 @@ public class AddReminderActivity extends AppCompatActivity {
         mRepeatTypeText = (TextView)findViewById(R.id.repeatType);
         mRepeatNoText = (TextView)findViewById(R.id.repeatNoText);
         mRepeatText = (TextView) findViewById(R.id.repeatText);
+        everyText = (TextView)findViewById(R.id.everyText);
 
-        // Setup Toolbar
-        //toolbar.setSupportActionBar();
-        getSupportActionBar().setTitle(R.string.title_activity_add_reminder);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+      
 
         //Auto-settings
         final Calendar mCalendar = Calendar.getInstance();
@@ -96,16 +96,20 @@ public class AddReminderActivity extends AppCompatActivity {
         mDate = mDay + "/" + mMonth + "/" + mYear;
         mTime = mHour + ":" + mMinute;
 
-        mRepeat = "false";
+        //mRepeat = "false";
         mRepeatNmbr = Integer.toString(1);
         mRepeatType = "Hour";
+
 
         // Setup TextViews using reminder values
         dateDisplay.setText(mDate);
         clockDisplay.setText(mTime);
         mRepeatNoText.setText("");
         mRepeatTypeText.setText("");
-        mRepeatText.setText("Every " + mRepeatNmbr + " " + mRepeatType + "(s)");
+        everyText.setText("Every");
+        everyText.setVisibility(View.GONE);
+        mRepeatText.setText("Off");
+
 
         //Setup Reminder Title
         remindMe.addTextChangedListener(new TextWatcher() {
@@ -201,6 +205,9 @@ public class AddReminderActivity extends AppCompatActivity {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                RemindrDatabase rb = new RemindrDatabase(AddReminderActivity.this);
+                // Creating Reminder
+                int ID = rb.addReminder(new Reminder(remindText, mDate, mTime, mRepeat, mRepeatNmbr, mRepeatType, mTag));
                 mCalendar.set(Calendar.MONTH, --mMonth);
                 mCalendar.set(Calendar.YEAR, mYear);
                 mCalendar.set(Calendar.DAY_OF_MONTH, mDay);
@@ -209,49 +216,62 @@ public class AddReminderActivity extends AppCompatActivity {
                 mCalendar.set(Calendar.SECOND, 0);
 
                 // Check repeat type
-                if (mRepeatType.equals("Minute")) {
+                if (mRepeatType.equals("Minute(s)")) {
                     mRepeatTime = Integer.parseInt(mRepeatNmbr) * milMinute;
-                } else if (mRepeatType.equals("Hour")) {
+                } else if (mRepeatType.equals("Hour(s)")) {
                     mRepeatTime = Integer.parseInt(mRepeatNmbr) * milHour;
-                } else if (mRepeatType.equals("Day")) {
+                } else if (mRepeatType.equals("Day(s)")) {
                     mRepeatTime = Integer.parseInt(mRepeatNmbr) * milDay;
-                } else if (mRepeatType.equals("Week")) {
+                } else if (mRepeatType.equals("Week(s)")) {
                     mRepeatTime = Integer.parseInt(mRepeatNmbr) * milWeek;
-                } else if (mRepeatType.equals("Month")) {
+                } else if (mRepeatType.equals("Month(s)")) {
                     mRepeatTime = Integer.parseInt(mRepeatNmbr) * milMonth;
+                } else if(mRepeatType.equals("Year(s)")){
+                    mRepeatTime = Integer.parseInt(mRepeatNmbr) * milYear;
                 }
 
-                if(mRepeat.equals(true)){
-                    new AlarmReceiver().setRepeatAlarm(getApplicationContext(), mCalendar, mRepeatTime);
+                if(repeatSwitch.isChecked()){
+                    new AlarmReceiver().setRepeatAlarm(getApplicationContext(), mCalendar, ID, mRepeatTime);
+                    Toast.makeText(getApplicationContext(),"Saved with Repeat",Toast.LENGTH_SHORT).show();
+
                 }else{
-                    new AlarmReceiver().setAlarm(getApplicationContext(),mCalendar);
-                }
+                    new AlarmReceiver().setAlarm(getApplicationContext(),mCalendar, ID);
+                    Toast.makeText(getApplicationContext(),"Saved",Toast.LENGTH_SHORT).show();
 
-                Toast.makeText(getApplicationContext(),"Saved",Toast.LENGTH_SHORT).show();
+                }
+                Intent intent = new Intent(v.getContext(), ListReminderActivity.class);
+                startActivity(intent);
+
             }
         });
-
     }
     // On clicking the repeat switch
     public void onSwitchRepeat(View view) {
-        boolean on = ((Switch) view).isChecked();
-        if (on) {
-            mRepeat = "true";
-            mRepeatText.setText("Every " + mRepeatNmbr + " " + mRepeatType + "(s)");
+        if (repeatSwitch.isChecked()) {
+            mRepeatTypeText.setText("Hours");
+            mRepeatTypeText.setVisibility(View.VISIBLE);
+            mRepeatNoText.setText("1");
+            mRepeatNoText.setVisibility(View.VISIBLE);
+            everyText.setVisibility(View.VISIBLE);
+            mRepeatText.setVisibility(View.GONE);
         } else {
-            mRepeat = "true";
             mRepeatText.setText(R.string.repeat_off);
+            mRepeatText.setVisibility(View.VISIBLE);
+            mRepeatTypeText.setVisibility(View.GONE);
+            mRepeatNoText.setVisibility(View.GONE);
+            everyText.setVisibility(View.GONE);
         }
     }
     //setting repeat type
     public void selectRepeatType(View v){
-        final String[] items = new String[5];
+        final String[] items = new String[6];
 
-        items[0] = "Minute";
-        items[1] = "Hour";
-        items[2] = "Day";
-        items[3] = "Week";
-        items[4] = "Month";
+        items[0] = "Minute(s)";
+        items[1] = "Hour(s)";
+        items[2] = "Day(s)";
+        items[3] = "Week(s)";
+        items[4] = "Month(s)";
+        items[5] = "Year(s)";
 
         // Create List Dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -262,7 +282,7 @@ public class AddReminderActivity extends AppCompatActivity {
 
                 mRepeatType = items[item];
                 mRepeatTypeText.setText(mRepeatType);
-                mRepeatText.setText("Every " + mRepeatNmbr + " " + mRepeatType + "(s)");
+                //mRepeatText.setText("Every " + mRepeatNoText + " " + mRepeatTypeText + "(s)");
             }
         });
         AlertDialog alert = builder.create();
@@ -284,12 +304,12 @@ public class AddReminderActivity extends AppCompatActivity {
                         if (input.getText().toString().length() == 0) {
                             mRepeatNmbr = Integer.toString(1);
                             mRepeatNoText.setText(mRepeatNmbr);
-                            mRepeatText.setText("Every " + mRepeatNmbr + " " + mRepeatType + "(s)");
+                            mRepeatText.setText("Every " + mRepeatNoText+ " " + mRepeatTypeText + "(s)");
                         }
                         else {
                             mRepeatNmbr = input.getText().toString().trim();
                             mRepeatNoText.setText(mRepeatNmbr);
-                            mRepeatText.setText("Every " + mRepeatNmbr + " " + mRepeatType + "(s)");
+                            mRepeatText.setText("Every " + mRepeatNoText + " " + mRepeatTypeText + "(s)");
                         }
                     }
                 });

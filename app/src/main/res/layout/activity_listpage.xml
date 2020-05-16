@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:fab="http://schemas.android.com/apk/res-auto"
+        android:background="#F2F6FC"
+        tools:context=".ListReminderActivity">
+
+    <view class="androidx.appcompat.app.AlertController$RecycleListView"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:id="@+id/reminderList"/>
+    <TextView
+            android:id="@+id/no_reminder_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:padding="16dp"
+            android:gravity="center"
+            android:visibility="gone"
+            android:text="@string/no_reminders"/>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/bigAddButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="330dp"
+            android:layout_marginTop="510dp"
+            android:src="@drawable/addbutton3"
+            android:contentDescription="@string/addReminder"
+            android:clickable="true"/>
+</RelativeLayout>

@@ -31,6 +31,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         NotificationCompat.Builder nb = notificationHelper.getChannelNotification();
         notificationHelper.getManager().notify(1, nb.build());
         Notification notification = nb.build();
+
         //notification.defaults |= Notification.DEFAULT_VIBRATE;
         //notification.defaults |= Notification.DEFAULT_SOUND;
         Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
@@ -55,10 +56,10 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
     }
 
-    public void setAlarm(Context context, Calendar calendar) {
+    public void setAlarm(Context context, Calendar calendar, int ID) {
         mAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, AlarmReceiver.class);
-        mPendingIntent = PendingIntent.getBroadcast(context,1,intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        mPendingIntent = PendingIntent.getBroadcast(context,ID,intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         // Calculate notification time
         Calendar c = Calendar.getInstance();
@@ -72,13 +73,13 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     }
 
-    public void setRepeatAlarm(Context context, Calendar calendar, long mRepeatTime) {
+    public void setRepeatAlarm(Context context, Calendar calendar,int ID, long mRepeatTime) {
         mAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         // Put Reminder ID in Intent Extra
         Intent intent = new Intent(context, AlarmReceiver.class);
         //intent.putExtra(ReminderEditActivity.EXTRA_REMINDER_ID, Integer.toString(ID));
-        mPendingIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        mPendingIntent = PendingIntent.getBroadcast(context, ID, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         // Calculate notification timein
         Calendar c = Calendar.getInstance();

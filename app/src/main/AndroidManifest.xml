@@ -18,6 +18,7 @@
             </intent-filter>
         </activity>
         <receiver android:name=".AlarmReceiver" android:process=":remote" />
+        <activity android:name=".ListReminderActivity"/>
     </application>
 
 </manifest>

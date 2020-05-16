@@ -4,14 +4,14 @@ package com.hfad.reminderapp;
  * @author ozgeonec
  */
 public class Reminder {
-    private final int id;
-    private final String title;
-    private final String date;
-    private final String time;
-    private final String repeat;
-    private final String repeatNmbr;
-    private final String repeatType;
-    private final String tagType;
+    private int id;
+    private  String title;
+    private  String date;
+    private  String time;
+    private  String repeat;
+    private  String repeatNmbr;
+    private  String repeatType;
+    private  String tagType;
 
     public Reminder(int id, String title, String date, String time, String repeat, String repeatNmbr, String repeatType, String tagType) {
         this.id = id;
@@ -24,11 +24,25 @@ public class Reminder {
         this.tagType = tagType;
     }
 
+    public Reminder() {
+
+    }
+
+    public Reminder(String remindText, String mDate, String mTime, String mRepeat, String mRepeatNmbr, String mRepeatType, String mTag) {
+        this.title = remindText;
+        this.date = mDate;
+        this.time = mTime;
+        this.repeat = mRepeat;
+        this.repeatNmbr = mRepeatNmbr;
+        this.repeatType = mRepeatType;
+        this.tagType = mTag;
+    }
+
     public String getRepeatNmbr() {
         return repeatNmbr;
     }
 
-    public int getId() {
+    public int getID() {
         return id;
     }
 
@@ -52,7 +66,31 @@ public class Reminder {
         return repeatType;
     }
 
-    public String getTagType() {
-        return tagType;
+    public String getTagType() { return tagType; }
+
+    public void setID(int id){
+        this.id=id;
     }
+    public void setTitle(String title){
+        this.title=title;
+    }
+    public void setDate(String date){
+        this.date=date;
+    }
+    public void setRepeat(String repeat){
+        this.repeat=repeat;
+    }
+    public void setRepeatType(String repeatType){
+        this.repeatType=repeatType;
+    }
+    public void setRepeatNmbr(String repeatNmbr){
+        this.repeatNmbr=repeatNmbr;
+    }
+    public void setTagType(String tagType){
+        this.tagType=tagType;
+    }
+    public void setTime(String time){
+        this.time=time;
+    }
+
 }

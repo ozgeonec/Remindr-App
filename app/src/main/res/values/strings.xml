@@ -29,5 +29,8 @@
     <string name="repeat_off">Off</string>
     <string name="repeat_no">Repetition Interval </string>
     <string name="repeat_type">Type of Repetitions</string>
+    <string name="Every">Every</string>
+    <string name="no_reminders">There are no Reminders!</string>
+    <string name="addReminder">Add a Reminder!</string>
 
 </resources>
