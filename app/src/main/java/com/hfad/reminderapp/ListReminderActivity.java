@@ -3,14 +3,19 @@ package com.hfad.reminderapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,6 +29,7 @@ public class ListReminderActivity extends AppCompatActivity {
     private RemindrDatabase rb;
     private AlarmReceiver alarmReceiver;
     private SimpleAdapter adapter;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,6 +39,12 @@ public class ListReminderActivity extends AppCompatActivity {
         noReminder = (TextView)findViewById(R.id.no_reminder_text);
         recycleList = (RecyclerView)findViewById(R.id.reminderList);
         addReminderButton = (FloatingActionButton)findViewById(R.id.bigAddButton);
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(R.string.app_name);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
         // Initialize reminder database
         rb = new RemindrDatabase(getApplicationContext());
 
@@ -45,9 +57,9 @@ public class ListReminderActivity extends AppCompatActivity {
         }
 
         // Create recycler view
-      /*  recycleList.setLayoutManager(getLayoutManager());
+       /* recycleList.setLayoutManager(getLayoutManager());
         registerForContextMenu(recycleList);
-        adapter = new SimpleAdapter();
+        SimpleAdapter adapter = new SimpleAdapter();
         adapter.setItemCount(getDefaultItemCount());
         recycleList.setAdapter(adapter);*/
 
@@ -60,4 +72,5 @@ public class ListReminderActivity extends AppCompatActivity {
         });
         alarmReceiver = new AlarmReceiver();
     }
+
 }

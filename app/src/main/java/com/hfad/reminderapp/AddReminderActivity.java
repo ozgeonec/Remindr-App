@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import androidx.appcompat.widget.Toolbar;
 
 import java.util.Calendar;
 import java.util.Objects;
@@ -25,6 +26,7 @@ import java.util.Objects;
 
 public class AddReminderActivity extends AppCompatActivity {
 
+    private Toolbar toolbar;
     private EditText remindMe;
     private TextView clockDisplay;
     private TextView dateDisplay;
@@ -82,6 +84,12 @@ public class AddReminderActivity extends AppCompatActivity {
         mRepeatNoText = (TextView)findViewById(R.id.repeatNoText);
         mRepeatText = (TextView) findViewById(R.id.repeatText);
         everyText = (TextView)findViewById(R.id.everyText);
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(R.string.app_name);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
 
       
 

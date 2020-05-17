@@ -2,16 +2,29 @@
 <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         xmlns:fab="http://schemas.android.com/apk/res-auto"
         android:background="#F2F6FC"
         tools:context=".ListReminderActivity">
 
-    <view class="androidx.appcompat.app.AlertController$RecycleListView"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:id="@+id/reminderList"/>
+    <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimaryDark"
+            app:title="@string/app_name"
+            app:titleTextColor="@color/colorAccent"
+            app:titleMarginStart="135dp"
+            app:titleTextAppearance="@style/MyTextTitle"
+            android:theme="@style/ToolbarTheme"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="550dp"
+            android:layout_below="@+id/toolbar"
+            android:id="@+id/reminderList"/>
     <TextView
             android:id="@+id/no_reminder_text"
             android:layout_width="match_parent"

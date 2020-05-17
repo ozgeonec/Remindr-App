@@ -6,9 +6,20 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+    <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:fontFamily">@font/spirax_font</item>
+        <item name="android:titleTextStyle">@style/MyTextTitle</item>
+
     </style>
 
-
+    <style name="MyTextTitle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textSize">40sp</item>
+        <item name="android:fontFamily">@font/spirax_font</item>
+    </style>
     <style name="remind_me">
         <item name="android:textSize">40sp</item>
         <item name="android:textColor">#FFFFFF</item>
