@@ -46,8 +46,8 @@ public class RemindrDatabase extends SQLiteOpenHelper {
                 + KEY_TIME + " INTEGER,"
                 + KEY_REPEAT + " BOOLEAN,"
                 + KEY_REPEAT_NO + " INTEGER,"
-                + KEY_REPEAT_TYPE + " TEXT"
-                + KEY_TAG + "TAG" + ")";
+                + KEY_REPEAT_TYPE + " TEXT,"
+                + KEY_TAG + "TEXT" + ")";
         db.execSQL(CREATE_REMINDERS_TABLE);
     }
 

@@ -16,11 +16,11 @@
             android:background="@color/colorPrimaryDark"
             app:title="@string/app_name"
             app:titleTextColor="@color/colorAccent"
-            app:titleMarginStart="135dp"
+            app:titleMarginStart="120dp"
             app:titleTextAppearance="@style/MyTextTitle"
             android:theme="@style/ToolbarTheme"/>
 
-    <androidx.recyclerview.widget.RecyclerView
+    <ListView
             android:layout_width="match_parent"
             android:layout_height="550dp"
             android:layout_below="@+id/toolbar"
@@ -39,8 +39,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="330dp"
-            android:layout_marginTop="510dp"
-            android:src="@drawable/addbutton3"
+            android:layout_marginTop="540dp"
+            android:src="@drawable/logo"
             android:contentDescription="@string/addReminder"
             android:clickable="true"/>
 </RelativeLayout>

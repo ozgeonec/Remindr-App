@@ -92,4 +92,18 @@ public class AlarmReceiver extends BroadcastReceiver {
                 mRepeatTime , mPendingIntent);
 
     }
+    public void cancelAlarm(Context context, int ID) {
+        mAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        // Cancel Alarm using Reminder ID
+        mPendingIntent = PendingIntent.getBroadcast(context, ID, new Intent(context, AlarmReceiver.class), 0);
+        mAlarmManager.cancel(mPendingIntent);
+
+        // Disable alarm
+        /*ComponentName receiver = new ComponentName(context, BootReceiver.class);
+        PackageManager pm = context.getPackageManager();
+        pm.setComponentEnabledSetting(receiver,
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP);*/
+    }
 }

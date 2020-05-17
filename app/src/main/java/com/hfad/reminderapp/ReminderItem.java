@@ -1,5 +1,7 @@
 package com.hfad.reminderapp;
 
+
+
 /**
  * @author ozgeonec
  */
@@ -19,4 +21,6 @@ public class ReminderItem {
         this.mRepeatType = RepeatType;
         this.mTag = Tag;
     }
+
+
 }
