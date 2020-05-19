@@ -34,5 +34,6 @@
     <string name="addReminder">Add a Reminder!</string>
     <string name="action_discard_reminder">discard reminder</string>
     <string name="action_save_reminder">save reminder</string>
+    <string name="menu">Menu</string>
 
 </resources>

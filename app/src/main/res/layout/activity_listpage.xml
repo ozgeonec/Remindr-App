@@ -8,16 +8,15 @@
         xmlns:fab="http://schemas.android.com/apk/res-auto"
         android:background="#F2F6FC"
         tools:context=".ListReminderActivity">
-
     <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorPrimaryDark"
-            app:title="@string/app_name"
             app:titleTextColor="@color/colorAccent"
-            app:titleMarginStart="120dp"
             app:titleTextAppearance="@style/MyTextTitle"
+            app:title="@string/app_name"
+            app:titleMarginStart="135dp"
             android:theme="@style/ToolbarTheme"/>
 
     <androidx.recyclerview.widget.RecyclerView

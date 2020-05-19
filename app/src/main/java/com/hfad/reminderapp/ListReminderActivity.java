@@ -4,9 +4,7 @@ package com.hfad.reminderapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.*;
-import android.widget.TextView;
-import android.widget.Toast;
-import androidx.annotation.Nullable;
+import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.widget.Toolbar;
@@ -16,15 +14,11 @@ import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
-import androidx.appcompat.view.ActionMode.Callback;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.bignerdranch.android.multiselector.SwappingHolder;
 
@@ -37,48 +31,31 @@ import java.util.List;
 
 /**
  * @author ozgeonec
- *   titleDisplay = (TextView)view.findViewById(R.id.recycle_title);
- *         tagDisplay = (TextView)view.findViewById(R.id.tagdisplay);
- *         dateTimeDisplay = (TextView)view.findViewById(R.id.date_timedisplay);
- *         repeatDisplay = (TextView)view.findViewById(R.id.repeat_display);
- *         bellImage = (ImageView)view.findViewById(R.id.bell_image);
- *         deleteImage = (ImageView)view.findViewById(R.id.delete_image);
  *
- *            private TextView titleDisplay,tagDisplay,dateTimeDisplay,repeatDisplay;
- *     private ImageView bellImage,deleteImage;
- *     private ArrayList<ReminderItem> mItems;
- *     private RemindrDatabase rb;
  */
 public class ListReminderActivity extends AppCompatActivity {
 
-    private TextView noReminder;
-    private RecyclerView recycleList;
     private FloatingActionButton addReminderButton;
     private RemindrDatabase rb;
-    private AlarmReceiver alarmReceiver;
-    private SimpleAdapter adapter;
     private Toolbar toolbar;
-
-
     private RecyclerView mList;
     private SimpleAdapter mAdapter;
-    private Toolbar mToolbar;
     private TextView mNoReminderView;
-    private FloatingActionButton mAddReminderButton;
-    private int mTempPost;
     private LinkedHashMap<Integer, Integer> IDmap = new LinkedHashMap<>();
     private MultiSelector mMultiSelector = new MultiSelector();
     private AlarmReceiver mAlarmReceiver;
+    private TextView tagDisplay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listpage);
 
-        noReminder = (TextView)findViewById(R.id.no_reminder_text);
-        recycleList = (RecyclerView)findViewById(R.id.reminderList);
+        mNoReminderView = (TextView)findViewById(R.id.no_reminder_text);
+        mList = (RecyclerView)findViewById(R.id.reminderList);
         addReminderButton = (FloatingActionButton)findViewById(R.id.bigAddButton);
         toolbar = (Toolbar)findViewById(R.id.toolbar);
+        tagDisplay = (TextView)findViewById(R.id.tagdisplay);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(R.string.app_name);
@@ -93,15 +70,15 @@ public class ListReminderActivity extends AppCompatActivity {
         List<Reminder> test = rb.getAllReminders();
 
         if (test.isEmpty()) {
-            noReminder.setVisibility(View.VISIBLE);
+            mNoReminderView.setVisibility(View.VISIBLE);
         }
 
         // Create recycler view
-        recycleList.setLayoutManager(getLayoutManager());
-        registerForContextMenu(recycleList);
+        mList.setLayoutManager(getLayoutManager());
+        registerForContextMenu(mList);
         SimpleAdapter adapter = new SimpleAdapter();
-        adapter.setItemCount(getDefaultItemCount());
-        recycleList.setAdapter(adapter);
+        adapter.setItemCount(100);
+        mList.setAdapter(adapter);
 
         addReminderButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,7 +87,7 @@ public class ListReminderActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        alarmReceiver = new AlarmReceiver();
+        mAlarmReceiver = new AlarmReceiver();
     }
     // Multi select items in recycler view
     private ActionMode.Callback mDeleteMode = new ModalMultiSelectorCallback(mMultiSelector) {
@@ -150,7 +127,7 @@ public class ListReminderActivity extends AppCompatActivity {
                     mMultiSelector.clearSelections();
                     // Recreate the recycler items
                     // This is done to remap the item and reminder ids
-                    mAdapter.onDeleteItem(getDefaultItemCount());
+                    mAdapter.onDeleteItem(100);
 
                     // Display toast to confirm delete
                     Toast.makeText(getApplicationContext(),
@@ -183,24 +160,56 @@ public class ListReminderActivity extends AppCompatActivity {
             return false;
         }
     };
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mAdapter.setItemCount(100);
+    }
+
+    // Recreate recycler view
+    // This is done so that newly created reminders are displayed
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        // To check is there are saved reminders
+        // If there are no reminders display a message asking the user to create reminders
+        List<Reminder> mTest = rb.getAllReminders();
+
+        if (mTest.isEmpty()) {
+            mNoReminderView.setVisibility(View.VISIBLE);
+        } else {
+            mNoReminderView.setVisibility(View.GONE);
+        }
+
+        //mAdapter.setItemCount(100);
+    }
+    // Setup menu
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        return super.onOptionsItemSelected(item);
+
+    }
+
+
     // Layout manager for recycler view
     protected RecyclerView.LayoutManager getLayoutManager() {
         return new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
     }
 
-    protected int getDefaultItemCount() {
+    /*protected int getDefaultItemCount() {
         return 100;
+    }*/
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_add_reminder, menu);
+        return true;
     }
 
 
     public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.VerticalItemHolder> {
-        private RecyclerView mList;
-        private SimpleAdapter mAdapter;
-        private TextView mNoReminderView;
+
         private int mTempPost;
-        private RemindrDatabase rb;
-        private MultiSelector mMultiSelector = new MultiSelector();
-        private AlarmReceiver mAlarmReceiver;
         private ArrayList<SimpleAdapter.ReminderItem> mItems;
 
         public SimpleAdapter() {
@@ -239,7 +248,7 @@ public class ListReminderActivity extends AppCompatActivity {
             itemHolder.setReminderTitle(item.mTitle);
             itemHolder.setReminderDateTime(item.mDateTime);
             itemHolder.setReminderRepeatInfo(item.mRepeat, item.mRepeatNo, item.mRepeatType);
-            //itemHolder.setActiveImage(item.mTagType);
+            itemHolder.setTagType(item.mTagType);
         }
 
         @Override
@@ -290,6 +299,7 @@ public class ListReminderActivity extends AppCompatActivity {
             private ColorGenerator mColorGenerator = ColorGenerator.DEFAULT;
             private TextDrawable mDrawableBuilder;
             private SimpleAdapter mAdapter;
+            private ImageButton deleteButton;
 
             public VerticalItemHolder(View itemView, SimpleAdapter adapter) {
                 super(itemView, mMultiSelector);
@@ -304,7 +314,7 @@ public class ListReminderActivity extends AppCompatActivity {
                 mTitleText = (TextView) itemView.findViewById(R.id.recycle_title);
                 mDateAndTimeText = (TextView) itemView.findViewById(R.id.date_timedisplay);
                 mRepeatInfoText = (TextView) itemView.findViewById(R.id.repeat_display);
-                mActiveImage = (ImageView) itemView.findViewById(R.id.bell_image);
+                mActiveImage = (ImageButton) itemView.findViewById(R.id.bell_image);
                 mThumbnailImage = (ImageView) itemView.findViewById(R.id.delete_image);
                 tagDisplay = (TextView)itemView.findViewById(R.id.tagdisplay);
             }
@@ -314,9 +324,9 @@ public class ListReminderActivity extends AppCompatActivity {
 
                 // Create intent to edit the reminder
                 // Put reminder id as extra
-               /* Intent i = new Intent(this, ReminderEditActivity.class);
-                i.putExtra(ReminderEditActivity.EXTRA_REMINDER_ID, mStringClickID);
-                startActivityForResult(i, 1);*/
+               Intent i = new Intent(ListReminderActivity.this, EditReminderActivity.class);
+                i.putExtra(EditReminderActivity.EXTRA_REMINDER_ID, mStringClickID);
+                startActivityForResult(i, 1);
             }
 
             // On clicking a reminder item
@@ -329,7 +339,7 @@ public class ListReminderActivity extends AppCompatActivity {
                     selectReminder(mReminderClickID);
 
                 } else if(mMultiSelector.getSelectedPositions().isEmpty()){
-                    mAdapter.setItemCount(getDefaultItemCount());
+                    mAdapter.setItemCount(100);
                 }
             }
 
@@ -372,14 +382,15 @@ public class ListReminderActivity extends AppCompatActivity {
                     mRepeatInfoText.setText("Repeat Off");
                 }
             }
+            public void setTagType(String tagType){
+                tagDisplay.setText(tagType);
+            }
 
             // Set active image as on or off
             /*public void setActiveImage(String active){
-                if(active.equals("true")){
+
                     mActiveImage.setImageResource(R.drawable.bell);
-                }else if (active.equals("false")) {
-                    mActiveImage.setImageResource(R.drawable.clock);
-                }
+
             }*/
         }
 

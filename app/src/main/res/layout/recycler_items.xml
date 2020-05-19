@@ -2,21 +2,10 @@
 <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/relativeLayoutlist"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
-
-    <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorPrimaryDark"
-            app:title="@string/app_name"
-            app:titleTextColor="@color/colorAccent"
-            app:titleTextAppearance="@style/MyTextTitle"
-            app:titleMarginStart="135dp"
-            android:theme="@style/ToolbarTheme"/>
 
     <ImageView android:layout_width="40dp"
                android:layout_height="40dp"
@@ -24,7 +13,7 @@
                android:layout_marginRight="16dp"
                android:layout_centerVertical="true"
                android:src="@drawable/bell"
-               android:id="@+id/bell_image"/>
+               android:id="@+id/delete_image"/>
 
     <LinearLayout
             android:layout_width="match_parent"
@@ -32,7 +21,7 @@
             android:layout_centerVertical="true"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
-            android:layout_toEndOf="@id/bell_image"
+            android:layout_toEndOf="@id/delete_image"
             android:background="#E4E9EF"
             android:orientation="vertical">
 
@@ -78,13 +67,14 @@
 
     </LinearLayout>
 
-    <ImageView android:layout_width="30dp"
+    <ImageButton
+               android:layout_width="30dp"
                android:layout_alignParentEnd="true"
                android:layout_height="30dp"
                android:layout_marginLeft="16dp"
                android:layout_marginRight="16dp"
-               android:src="@drawable/tag"
+               android:src="@drawable/deletebutton2"
                android:layout_centerVertical="true"
-               android:id="@+id/delete_image"/>
+               android:id="@+id/bell_image"/>
 
 </RelativeLayout>
