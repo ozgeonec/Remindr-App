@@ -239,7 +239,7 @@ public class ListReminderActivity extends AppCompatActivity {
             itemHolder.setReminderTitle(item.mTitle);
             itemHolder.setReminderDateTime(item.mDateTime);
             itemHolder.setReminderRepeatInfo(item.mRepeat, item.mRepeatNo, item.mRepeatType);
-            itemHolder.setActiveImage(item.mActive);
+            //itemHolder.setActiveImage(item.mTagType);
         }
 
         @Override
@@ -254,15 +254,15 @@ public class ListReminderActivity extends AppCompatActivity {
             public String mRepeat;
             public String mRepeatNo;
             public String mRepeatType;
-            public String mActive;
+            public String mTagType;
 
-            public ReminderItem(String Title, String DateTime, String Repeat, String RepeatNo, String RepeatType, String Active) {
+            public ReminderItem(String Title, String DateTime, String Repeat, String RepeatNo, String RepeatType, String TagType) {
                 this.mTitle = Title;
                 this.mDateTime = DateTime;
                 this.mRepeat = Repeat;
                 this.mRepeatNo = RepeatNo;
                 this.mRepeatType = RepeatType;
-                this.mActive = Active;
+                this.mTagType = TagType;
             }
         }
 
@@ -374,13 +374,13 @@ public class ListReminderActivity extends AppCompatActivity {
             }
 
             // Set active image as on or off
-            public void setActiveImage(String active){
+            /*public void setActiveImage(String active){
                 if(active.equals("true")){
                     mActiveImage.setImageResource(R.drawable.bell);
                 }else if (active.equals("false")) {
                     mActiveImage.setImageResource(R.drawable.clock);
                 }
-            }
+            }*/
         }
 
         // Generate random test data

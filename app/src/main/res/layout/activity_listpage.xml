@@ -20,7 +20,7 @@
             app:titleTextAppearance="@style/MyTextTitle"
             android:theme="@style/ToolbarTheme"/>
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="550dp"
             android:layout_below="@+id/toolbar"

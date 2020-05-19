@@ -104,7 +104,7 @@ public class AddReminderActivity extends AppCompatActivity {
         mDate = mDay + "/" + mMonth + "/" + mYear;
         mTime = mHour + ":" + mMinute;
 
-        //mRepeat = "false";
+        mRepeat = "false";
         mRepeatNmbr = Integer.toString(1);
         mRepeatType = "Hour";
 
@@ -208,6 +208,7 @@ public class AddReminderActivity extends AppCompatActivity {
         tagChoice.setAdapter(adapter);
         addListenerOnSpinnerItemSelection();
         addListenerOnButton();
+        mTag = tagChoice.getSelectedItem().toString();
 
         //Alarm Setting
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -239,6 +240,7 @@ public class AddReminderActivity extends AppCompatActivity {
                 }
 
                 if(repeatSwitch.isChecked()){
+                    mRepeat = "true";
                     new AlarmReceiver().setRepeatAlarm(getApplicationContext(), mCalendar, ID, mRepeatTime);
                     Toast.makeText(getApplicationContext(),"Saved with Repeat",Toast.LENGTH_SHORT).show();
 
@@ -256,6 +258,7 @@ public class AddReminderActivity extends AppCompatActivity {
     // On clicking the repeat switch
     public void onSwitchRepeat(View view) {
         if (repeatSwitch.isChecked()) {
+            mRepeat="true";
             mRepeatTypeText.setText("Hours");
             mRepeatTypeText.setVisibility(View.VISIBLE);
             mRepeatNoText.setText("1");
