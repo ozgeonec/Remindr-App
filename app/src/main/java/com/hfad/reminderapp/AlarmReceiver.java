@@ -29,7 +29,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         NotificationHelper notificationHelper = new NotificationHelper(context);
         NotificationCompat.Builder nb = notificationHelper.getChannelNotification();
-        notificationHelper.getManager().notify(1, nb.build());
+        notificationHelper.getManager().notify(0, nb.build());
         Notification notification = nb.build();
 
         //notification.defaults |= Notification.DEFAULT_VIBRATE;

@@ -166,7 +166,7 @@ public class EditReminderActivity extends AppCompatActivity {
         mRepeatTypeText.setText(mRepeatType);
         int spinnerPosition = adapter.getPosition(mTag);
         tagChoice.setSelection(spinnerPosition);
-        mRepeatText.setText("Every " + mRepeatNoText + " " + mRepeatTypeText + "(s)");
+       //mRepeatText.setText("Every " + mRepeatNoText + " " + mRepeatTypeText + "(s)");
 
 
 

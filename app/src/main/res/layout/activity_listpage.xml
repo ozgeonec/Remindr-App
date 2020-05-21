@@ -6,7 +6,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         xmlns:fab="http://schemas.android.com/apk/res-auto"
-        android:background="#F2F6FC"
+        android:background="#E4E9EF"
         tools:context=".ListReminderActivity">
     <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"

@@ -206,23 +206,22 @@ public class AddReminderActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         tagChoice.setAdapter(adapter);
-        addListenerOnSpinnerItemSelection();
-        addListenerOnButton();
-        mTag = tagChoice.getSelectedItem().toString();
+        //mTag = tagChoice.getSelectedItem().toString();
 
         //Alarm Setting
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 RemindrDatabase rb = new RemindrDatabase(AddReminderActivity.this);
-                // Creating Reminder
-                int ID = rb.addReminder(new Reminder(remindText, mDate, mTime, mRepeat, mRepeatNmbr, mRepeatType, mTag));
+
+                mCalendar.set(Calendar.DAY_OF_MONTH, mDay);
                 mCalendar.set(Calendar.MONTH, --mMonth);
                 mCalendar.set(Calendar.YEAR, mYear);
-                mCalendar.set(Calendar.DAY_OF_MONTH, mDay);
                 mCalendar.set(Calendar.HOUR_OF_DAY, mHour);
                 mCalendar.set(Calendar.MINUTE, mMinute);
                 mCalendar.set(Calendar.SECOND, 0);
+                mTag = tagChoice.getSelectedItem().toString();
+
 
                 // Check repeat type
                 if (mRepeatType.equals("Minute(s)")) {
@@ -238,7 +237,8 @@ public class AddReminderActivity extends AppCompatActivity {
                 } else if(mRepeatType.equals("Year(s)")){
                     mRepeatTime = Integer.parseInt(mRepeatNmbr) * milYear;
                 }
-
+                // Creating Reminder
+                int ID = rb.addReminder(new Reminder(remindText, mDate, mTime, mRepeat, mRepeatNmbr, mRepeatType, mTag));
                 if(repeatSwitch.isChecked()){
                     mRepeat = "true";
                     new AlarmReceiver().setRepeatAlarm(getApplicationContext(), mCalendar, ID, mRepeatTime);
@@ -315,12 +315,12 @@ public class AddReminderActivity extends AppCompatActivity {
                         if (input.getText().toString().length() == 0) {
                             mRepeatNmbr = Integer.toString(1);
                             mRepeatNoText.setText(mRepeatNmbr);
-                            mRepeatText.setText("Every " + mRepeatNoText+ " " + mRepeatTypeText + "(s)");
+                            mRepeatText.setText("Every " + mRepeatNoText+ " " + mRepeatTypeText );
                         }
                         else {
                             mRepeatNmbr = input.getText().toString().trim();
                             mRepeatNoText.setText(mRepeatNmbr);
-                            mRepeatText.setText("Every " + mRepeatNoText + " " + mRepeatTypeText + "(s)");
+                            mRepeatText.setText("Every " + mRepeatNoText + " " + mRepeatTypeText);
                         }
                     }
                 });
@@ -330,17 +330,6 @@ public class AddReminderActivity extends AppCompatActivity {
             }
         });
         alert.show();
-    }
-
-    //Spinner functions
-    public void addListenerOnSpinnerItemSelection(){
-
-        tagChoice.setOnItemSelectedListener(new SpinnerActivity());
-        //repeatChoice.setOnItemSelectedListener(new SpinnerActivity());
-    }
-    public void addListenerOnButton(){
-        tagChoice = (Spinner)findViewById(R.id.tagchoices);
-        //repeatChoice = (Spinner)findViewById(R.id.repeatchoice);
     }
 
 }

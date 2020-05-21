@@ -246,7 +246,8 @@ public class ListReminderActivity extends AppCompatActivity {
         public void onBindViewHolder(VerticalItemHolder itemHolder, int position) {
             SimpleAdapter.ReminderItem item = mItems.get(position);
             itemHolder.setReminderTitle(item.mTitle);
-            itemHolder.setReminderDateTime(item.mDateTime);
+            itemHolder.setReminderDate(item.mDate);
+            itemHolder.setReminderTime(item.mTime);
             itemHolder.setReminderRepeatInfo(item.mRepeat, item.mRepeatNo, item.mRepeatType);
             itemHolder.setTagType(item.mTagType);
         }
@@ -259,15 +260,17 @@ public class ListReminderActivity extends AppCompatActivity {
         // Class for recycler view items
         public  class ReminderItem {
             public String mTitle;
-            public String mDateTime;
+            public String mDate;
+            public String mTime;
             public String mRepeat;
             public String mRepeatNo;
             public String mRepeatType;
             public String mTagType;
 
-            public ReminderItem(String Title, String DateTime, String Repeat, String RepeatNo, String RepeatType, String TagType) {
+            public ReminderItem(String Title, String Date,String Time, String Repeat, String RepeatNo, String RepeatType, String TagType) {
                 this.mTitle = Title;
-                this.mDateTime = DateTime;
+                this.mDate = Date;
+                this.mTime = Time;
                 this.mRepeat = Repeat;
                 this.mRepeatNo = RepeatNo;
                 this.mRepeatType = RepeatType;
@@ -276,15 +279,30 @@ public class ListReminderActivity extends AppCompatActivity {
         }
 
         // Class to compare date and time so that items are sorted in ascending order
-        public class DateTimeComparator implements Comparator {
-            DateFormat f = new SimpleDateFormat("dd/mm/yyyy hh:mm");
+        public class DateComparator implements Comparator {
+            DateFormat f = new SimpleDateFormat("dd/mm/yyyy",Locale.getDefault());
 
             public int compare(Object a, Object b) {
-                String o1 = ((DateTimeSorter)a).getDateTime();
-                String o2 = ((DateTimeSorter)b).getDateTime();
+                String o1 = ((DateTimeSorter)a).getDate();
+                String o2 = ((DateTimeSorter)b).getDate();
 
                 try {
                     return f.parse(o1).compareTo(f.parse(o2));
+                } catch (ParseException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
+        }
+        public class TimeComparator implements Comparator{
+            DateFormat f = new SimpleDateFormat("hh:mm",Locale.getDefault());
+
+            @Override
+            public int compare(Object a, Object b) {
+                String o3 = ((DateTimeSorter)a).getTime();
+                String o4 = ((DateTimeSorter)b).getTime();
+
+                try {
+                    return f.parse(o3).compareTo(f.parse(o4));
                 } catch (ParseException e) {
                     throw new IllegalArgumentException(e);
                 }
@@ -294,12 +312,13 @@ public class ListReminderActivity extends AppCompatActivity {
         // UI and data class for recycler view items
         public  class VerticalItemHolder extends SwappingHolder
                 implements View.OnClickListener, View.OnLongClickListener {
-            private TextView mTitleText, mDateAndTimeText, mRepeatInfoText, tagDisplay;
+            private TextView mTitleText, timeDisplay, mRepeatInfoText, tagDisplay;
             private ImageView mActiveImage , mThumbnailImage;
             private ColorGenerator mColorGenerator = ColorGenerator.DEFAULT;
             private TextDrawable mDrawableBuilder;
             private SimpleAdapter mAdapter;
             private ImageButton deleteButton;
+            private TextView dateDisplay;
 
             public VerticalItemHolder(View itemView, SimpleAdapter adapter) {
                 super(itemView, mMultiSelector);
@@ -312,7 +331,8 @@ public class ListReminderActivity extends AppCompatActivity {
 
                 // Initialize views
                 mTitleText = (TextView) itemView.findViewById(R.id.recycle_title);
-                mDateAndTimeText = (TextView) itemView.findViewById(R.id.date_timedisplay);
+                timeDisplay = (TextView) itemView.findViewById(R.id.timedisplay);
+                dateDisplay = (TextView)itemView.findViewById(R.id.date_display);
                 mRepeatInfoText = (TextView) itemView.findViewById(R.id.repeat_display);
                 mActiveImage = (ImageButton) itemView.findViewById(R.id.bell_image);
                 mThumbnailImage = (ImageView) itemView.findViewById(R.id.delete_image);
@@ -370,14 +390,13 @@ public class ListReminderActivity extends AppCompatActivity {
             }
 
             // Set date and time views
-            public void setReminderDateTime(String datetime) {
-                mDateAndTimeText.setText(datetime);
-            }
+            public void setReminderDate(String date) { dateDisplay.setText(date); }
+            public void setReminderTime(String time){timeDisplay.setText(time); }
 
             // Set repeat views
             public void setReminderRepeatInfo(String repeat, String repeatNo, String repeatType) {
                 if(repeat.equals("true")){
-                    mRepeatInfoText.setText("Every " + repeatNo + " " + repeatType + "(s)");
+                    mRepeatInfoText.setText("Every " + repeatNo + " " + repeatType);
                 }else if (repeat.equals("false")) {
                     mRepeatInfoText.setText("Repeat Off");
                 }
@@ -396,7 +415,7 @@ public class ListReminderActivity extends AppCompatActivity {
 
         // Generate random test data
         public SimpleAdapter.ReminderItem generateDummyData() {
-            return new SimpleAdapter.ReminderItem("1", "2", "3", "4", "5", "6");
+            return new SimpleAdapter.ReminderItem("1", "2", "3", "4", "5", "6","7");
         }
 
         // Generate real data for each item
@@ -408,18 +427,22 @@ public class ListReminderActivity extends AppCompatActivity {
 
             // Initialize lists
             List<String> Titles = new ArrayList<>();
+            List<String> Date = new ArrayList<>();
+            List<String> Time = new ArrayList<>();
             List<String> Repeats = new ArrayList<>();
             List<String> RepeatNos = new ArrayList<>();
             List<String> RepeatTypes = new ArrayList<>();
             List<String> Tags = new ArrayList<>();
-            List<String> DateAndTime = new ArrayList<>();
+
+
             List<Integer> IDList= new ArrayList<>();
             List<DateTimeSorter> DateTimeSortList = new ArrayList<>();
 
             // Add details of all reminders in their respective lists
             for (Reminder r : reminders) {
                 Titles.add(r.getTitle());
-                DateAndTime.add(r.getDate() + " " + r.getTime());
+                Date.add(r.getDate());
+                Time.add(r.getTime());
                 Repeats.add(r.getRepeat());
                 RepeatNos.add(r.getRepeatNmbr());
                 RepeatTypes.add(r.getRepeatType());
@@ -431,12 +454,13 @@ public class ListReminderActivity extends AppCompatActivity {
 
             // Add date and time as DateTimeSorter objects
             for(int k = 0; k<Titles.size(); k++){
-                DateTimeSortList.add(new DateTimeSorter(key, DateAndTime.get(k)));
+                DateTimeSortList.add(new DateTimeSorter(key, Date.get(k),Time.get(k)));
                 key++;
             }
 
             // Sort items according to date and time in ascending order
-            Collections.sort(DateTimeSortList, new SimpleAdapter.DateTimeComparator());
+            Collections.sort(DateTimeSortList, new SimpleAdapter.DateComparator());
+            Collections.sort(DateTimeSortList, new SimpleAdapter.TimeComparator());
 
             int k = 0;
 
@@ -444,7 +468,7 @@ public class ListReminderActivity extends AppCompatActivity {
             for (DateTimeSorter item:DateTimeSortList) {
                 int i = item.getIndex();
 
-                items.add(new SimpleAdapter.ReminderItem(Titles.get(i), DateAndTime.get(i), Repeats.get(i),
+                items.add(new SimpleAdapter.ReminderItem(Titles.get(i), Date.get(i), Time.get(i), Repeats.get(i),
                         RepeatNos.get(i), RepeatTypes.get(i), Tags.get(i)));
                 IDmap.put(k, IDList.get(i));
                 k++;

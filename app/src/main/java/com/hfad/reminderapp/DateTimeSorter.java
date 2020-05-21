@@ -5,12 +5,15 @@ package com.hfad.reminderapp;
  */
 public class DateTimeSorter {
     public int mIndex;
-    public String mDateTime;
+    public String mDate;
+    public String mTime;
 
 
-    public DateTimeSorter(int index, String DateTime){
+
+    public DateTimeSorter(int index, String Date, String Time){
         mIndex = index;
-        mDateTime = DateTime;
+        mDate = Date;
+        mTime = Time;
     }
 
     public DateTimeSorter(){}
@@ -24,11 +27,19 @@ public class DateTimeSorter {
         mIndex = index;
     }
 
-    public String getDateTime() {
-        return mDateTime;
+    public String getDate() {
+        return mDate;
     }
 
-    public void setDateTime(String dateTime) {
-        mDateTime = dateTime;
+   // public void setDate(String date) { mDate = date; }
+    public void setmTime(String time) {
+        mTime = time;
     }
+    public void setmDate(String date){mDate = date;}
+
+    public String getTime(){
+        return mTime;
+    }
+
+
 }

@@ -71,11 +71,12 @@ public class Reminder {
     public void setID(int id){
         this.id=id;
     }
-    public void setTitle(String title){
-        this.title=title;
-    }
+    public void setTitle(String title){ this.title=title;}
     public void setDate(String date){
         this.date=date;
+    }
+    public void setTime(String time){
+        this.time=time;
     }
     public void setRepeat(String repeat){
         this.repeat=repeat;
@@ -89,8 +90,6 @@ public class Reminder {
     public void setTagType(String tagType){
         this.tagType=tagType;
     }
-    public void setTime(String time){
-        this.time=time;
-    }
+
 
 }
