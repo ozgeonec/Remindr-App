@@ -35,5 +35,7 @@
     <string name="action_discard_reminder">discard reminder</string>
     <string name="action_save_reminder">save reminder</string>
     <string name="menu">Menu</string>
+    <string name="_8942">⋮</string>
+    <string name="coloricon">coloricon</string>
 
 </resources>

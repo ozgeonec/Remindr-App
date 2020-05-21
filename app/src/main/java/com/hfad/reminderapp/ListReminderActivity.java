@@ -7,6 +7,7 @@ import android.view.*;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
+import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.bignerdranch.android.multiselector.SwappingHolder;
 
+import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -46,6 +48,7 @@ public class ListReminderActivity extends AppCompatActivity {
     private AlarmReceiver mAlarmReceiver;
     private TextView tagDisplay;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,12 +60,15 @@ public class ListReminderActivity extends AppCompatActivity {
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         tagDisplay = (TextView)findViewById(R.id.tagdisplay);
 
+
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(R.string.app_name);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         // Initialize reminder database
         rb = new RemindrDatabase(getApplicationContext());
+
+
 
 
 
@@ -240,14 +246,16 @@ public class ListReminderActivity extends AppCompatActivity {
             View root = inflater.inflate(R.layout.recycler_items, container, false);
 
             return new VerticalItemHolder(root, this);
+
         }
 
         @Override
         public void onBindViewHolder(VerticalItemHolder itemHolder, int position) {
+
             SimpleAdapter.ReminderItem item = mItems.get(position);
+
             itemHolder.setReminderTitle(item.mTitle);
-            itemHolder.setReminderDate(item.mDate);
-            itemHolder.setReminderTime(item.mTime);
+            itemHolder.setReminderDateTime(item.mDateTime);
             itemHolder.setReminderRepeatInfo(item.mRepeat, item.mRepeatNo, item.mRepeatType);
             itemHolder.setTagType(item.mTagType);
         }
@@ -260,17 +268,15 @@ public class ListReminderActivity extends AppCompatActivity {
         // Class for recycler view items
         public  class ReminderItem {
             public String mTitle;
-            public String mDate;
-            public String mTime;
+            public String mDateTime;
             public String mRepeat;
             public String mRepeatNo;
             public String mRepeatType;
             public String mTagType;
 
-            public ReminderItem(String Title, String Date,String Time, String Repeat, String RepeatNo, String RepeatType, String TagType) {
+            public ReminderItem(String Title, String DateTime, String Repeat, String RepeatNo, String RepeatType, String TagType) {
                 this.mTitle = Title;
-                this.mDate = Date;
-                this.mTime = Time;
+                this.mDateTime = DateTime;
                 this.mRepeat = Repeat;
                 this.mRepeatNo = RepeatNo;
                 this.mRepeatType = RepeatType;
@@ -278,31 +284,16 @@ public class ListReminderActivity extends AppCompatActivity {
             }
         }
 
-        // Class to compare date and time so that items are sorted in ascending order
-        public class DateComparator implements Comparator {
-            DateFormat f = new SimpleDateFormat("dd/mm/yyyy",Locale.getDefault());
+        // Classes to compare date and time
+        public class DateAndTimeComparator implements Comparator {
+            DateFormat f = new SimpleDateFormat("dd/MM/yyyy hh:mm",Locale.getDefault());
 
             public int compare(Object a, Object b) {
-                String o1 = ((DateTimeSorter)a).getDate();
-                String o2 = ((DateTimeSorter)b).getDate();
+                String o1 = ((DateTimeSorter)a).getDateTime();
+                String o2 = ((DateTimeSorter)b).getDateTime();
 
                 try {
                     return f.parse(o1).compareTo(f.parse(o2));
-                } catch (ParseException e) {
-                    throw new IllegalArgumentException(e);
-                }
-            }
-        }
-        public class TimeComparator implements Comparator{
-            DateFormat f = new SimpleDateFormat("hh:mm",Locale.getDefault());
-
-            @Override
-            public int compare(Object a, Object b) {
-                String o3 = ((DateTimeSorter)a).getTime();
-                String o4 = ((DateTimeSorter)b).getTime();
-
-                try {
-                    return f.parse(o3).compareTo(f.parse(o4));
                 } catch (ParseException e) {
                     throw new IllegalArgumentException(e);
                 }
@@ -317,10 +308,12 @@ public class ListReminderActivity extends AppCompatActivity {
             private ColorGenerator mColorGenerator = ColorGenerator.DEFAULT;
             private TextDrawable mDrawableBuilder;
             private SimpleAdapter mAdapter;
-            private ImageButton deleteButton;
+            //private ImageButton deleteButton;
             private TextView dateDisplay;
+            private Button menuButton2;
 
-            public VerticalItemHolder(View itemView, SimpleAdapter adapter) {
+
+            public VerticalItemHolder(final View itemView, SimpleAdapter adapter) {
                 super(itemView, mMultiSelector);
                 itemView.setOnClickListener(this);
                 itemView.setOnLongClickListener(this);
@@ -334,10 +327,51 @@ public class ListReminderActivity extends AppCompatActivity {
                 timeDisplay = (TextView) itemView.findViewById(R.id.timedisplay);
                 dateDisplay = (TextView)itemView.findViewById(R.id.date_display);
                 mRepeatInfoText = (TextView) itemView.findViewById(R.id.repeat_display);
-                mActiveImage = (ImageButton) itemView.findViewById(R.id.bell_image);
+                //mActiveImage = (ImageButton) itemView.findViewById(R.id.bell_image);
                 mThumbnailImage = (ImageView) itemView.findViewById(R.id.delete_image);
                 tagDisplay = (TextView)itemView.findViewById(R.id.tagdisplay);
+                menuButton2 = (Button)itemView.findViewById(R.id.menuButton);
+                menuButton2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        PopupMenu popupMenu = new PopupMenu(getApplicationContext(),menuButton2);
+
+                        //popupMenu.getMenuInflater().inflate(R.menu.list_menu, popupMenu.getMenu());
+                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                            @Override
+                            public boolean onMenuItemClick(MenuItem item) {
+                                switch (item.getItemId()){
+                                    case R.id.discard_reminder:
+                                        Toast.makeText(getApplicationContext(),
+                                                "Deleted",
+                                                Toast.LENGTH_SHORT).show();
+                                        return true;
+                                    case R.id.save_reminder:
+
+                                        Intent i = new Intent(ListReminderActivity.this, EditReminderActivity.class);
+                                        i.putExtra(EditReminderActivity.EXTRA_REMINDER_ID, IDmap);
+                                        startActivityForResult(i, 1);
+                                        return true;
+                                    default:
+                                        return false;
+                                }
+
+                            }
+                        });
+                        popupMenu.inflate(R.menu.list_menu);
+                        popupMenu.setGravity(Gravity.RIGHT);
+                        try {
+                            Field mFieldPopup=popupMenu.getClass().getDeclaredField("mPopup");
+                            mFieldPopup.setAccessible(true);
+                            MenuPopupHelper mPopup = (MenuPopupHelper) mFieldPopup.get(popupMenu);
+                            mPopup.setForceShowIcon(true);
+                        } catch (Exception e) { }
+                        popupMenu.show();
+                    }
+                });
+
             }
+
             // On clicking a reminder item
             private void selectReminder(int mClickID) {
                 String mStringClickID = Integer.toString(mClickID);
@@ -390,8 +424,9 @@ public class ListReminderActivity extends AppCompatActivity {
             }
 
             // Set date and time views
-            public void setReminderDate(String date) { dateDisplay.setText(date); }
-            public void setReminderTime(String time){timeDisplay.setText(time); }
+            public void setReminderDateTime(String datetime) {
+                dateDisplay.setText(datetime);
+            }
 
             // Set repeat views
             public void setReminderRepeatInfo(String repeat, String repeatNo, String repeatType) {
@@ -408,14 +443,12 @@ public class ListReminderActivity extends AppCompatActivity {
             // Set active image as on or off
             /*public void setActiveImage(String active){
 
-                    mActiveImage.setImageResource(R.drawable.bell);
-
-            }*/
+                    mActiveImage.setImageResource(R.drawable.bell); }*/
         }
 
         // Generate random test data
         public SimpleAdapter.ReminderItem generateDummyData() {
-            return new SimpleAdapter.ReminderItem("1", "2", "3", "4", "5", "6","7");
+            return new SimpleAdapter.ReminderItem("1", "2", "3", "4", "5", "6");
         }
 
         // Generate real data for each item
@@ -427,8 +460,7 @@ public class ListReminderActivity extends AppCompatActivity {
 
             // Initialize lists
             List<String> Titles = new ArrayList<>();
-            List<String> Date = new ArrayList<>();
-            List<String> Time = new ArrayList<>();
+            List<String> DateAndTime = new ArrayList<>();
             List<String> Repeats = new ArrayList<>();
             List<String> RepeatNos = new ArrayList<>();
             List<String> RepeatTypes = new ArrayList<>();
@@ -441,8 +473,7 @@ public class ListReminderActivity extends AppCompatActivity {
             // Add details of all reminders in their respective lists
             for (Reminder r : reminders) {
                 Titles.add(r.getTitle());
-                Date.add(r.getDate());
-                Time.add(r.getTime());
+                DateAndTime.add(r.getDate() + " " + r.getTime());
                 Repeats.add(r.getRepeat());
                 RepeatNos.add(r.getRepeatNmbr());
                 RepeatTypes.add(r.getRepeatType());
@@ -454,13 +485,13 @@ public class ListReminderActivity extends AppCompatActivity {
 
             // Add date and time as DateTimeSorter objects
             for(int k = 0; k<Titles.size(); k++){
-                DateTimeSortList.add(new DateTimeSorter(key, Date.get(k),Time.get(k)));
+                DateTimeSortList.add(new DateTimeSorter(key, DateAndTime.get(k)));
                 key++;
             }
 
             // Sort items according to date and time in ascending order
-            Collections.sort(DateTimeSortList, new SimpleAdapter.DateComparator());
-            Collections.sort(DateTimeSortList, new SimpleAdapter.TimeComparator());
+            Collections.sort(DateTimeSortList, new SimpleAdapter.DateAndTimeComparator());
+
 
             int k = 0;
 
@@ -468,7 +499,7 @@ public class ListReminderActivity extends AppCompatActivity {
             for (DateTimeSorter item:DateTimeSortList) {
                 int i = item.getIndex();
 
-                items.add(new SimpleAdapter.ReminderItem(Titles.get(i), Date.get(i), Time.get(i), Repeats.get(i),
+                items.add(new SimpleAdapter.ReminderItem(Titles.get(i), DateAndTime.get(i), Repeats.get(i),
                         RepeatNos.get(i), RepeatTypes.get(i), Tags.get(i)));
                 IDmap.put(k, IDList.get(i));
                 k++;

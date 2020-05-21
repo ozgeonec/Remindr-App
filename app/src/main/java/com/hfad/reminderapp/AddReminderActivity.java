@@ -52,6 +52,7 @@ public class AddReminderActivity extends AppCompatActivity {
     private long mRepeatTime;
     private Switch repeatSwitch;
     private TextView everyText;
+    private Calendar mCalendar;
 
     // Constant values in milliseconds
     private static final long milMinute = 60000L;
@@ -94,7 +95,7 @@ public class AddReminderActivity extends AppCompatActivity {
       
 
         //Auto-settings
-        final Calendar mCalendar = Calendar.getInstance();
+        mCalendar = Calendar.getInstance();
         mHour = mCalendar.get(Calendar.HOUR_OF_DAY);
         mMinute = mCalendar.get(Calendar.MINUTE);
         mYear = mCalendar.get(Calendar.YEAR);
@@ -156,14 +157,13 @@ public class AddReminderActivity extends AppCompatActivity {
         dateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int day) {
-                month = month + 1;
-                mDay = day;
-                mMonth = month;
-                mYear = year;
-                Log.d("AddReminderActivity", "onDateSet: dd/mm/yyy: " + day + "/" + month + "/" + year);
 
-                String date = day + "/" + month + "/" + year;
-                dateDisplay.setText(date);
+                mDay = day;
+                mMonth = month + 1;
+                mYear = year;
+                mDate = mDay + "/" + mMonth + "/" + mYear;
+
+                dateDisplay.setText(mDate);
             }
         };
         //Time Setting
@@ -214,7 +214,7 @@ public class AddReminderActivity extends AppCompatActivity {
             public void onClick(View v) {
                 RemindrDatabase rb = new RemindrDatabase(AddReminderActivity.this);
 
-                mCalendar.set(Calendar.DAY_OF_MONTH, mDay);
+                mCalendar.set(Calendar.DAY_OF_MONTH,mDay);
                 mCalendar.set(Calendar.MONTH, --mMonth);
                 mCalendar.set(Calendar.YEAR, mYear);
                 mCalendar.set(Calendar.HOUR_OF_DAY, mHour);
