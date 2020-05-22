@@ -100,10 +100,10 @@ public class AlarmReceiver extends BroadcastReceiver {
         mAlarmManager.cancel(mPendingIntent);
 
         // Disable alarm
-        /*ComponentName receiver = new ComponentName(context, BootReceiver.class);
+        ComponentName receiver = new ComponentName(context, AlarmReceiver.class);
         PackageManager pm = context.getPackageManager();
         pm.setComponentEnabledSetting(receiver,
                 PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                PackageManager.DONT_KILL_APP);*/
+                PackageManager.DONT_KILL_APP);
     }
 }

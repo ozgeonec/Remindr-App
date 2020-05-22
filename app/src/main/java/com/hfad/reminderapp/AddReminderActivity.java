@@ -13,6 +13,8 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
@@ -251,10 +253,32 @@ public class AddReminderActivity extends AppCompatActivity {
                 }
                 Intent intent = new Intent(v.getContext(), ListReminderActivity.class);
                 startActivity(intent);
-
+            onBackPressed();
             }
         });
     }
+    // On pressing the back button
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+    // Creating the menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_add_reminder, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // On clicking the back arrow
+
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     // On clicking the repeat switch
     public void onSwitchRepeat(View view) {
         if (repeatSwitch.isChecked()) {

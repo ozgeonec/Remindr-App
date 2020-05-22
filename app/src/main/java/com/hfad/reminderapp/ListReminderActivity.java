@@ -60,17 +60,14 @@ public class ListReminderActivity extends AppCompatActivity {
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         tagDisplay = (TextView)findViewById(R.id.tagdisplay);
 
-
+        //Toolbar settings
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(R.string.app_name);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+
         // Initialize reminder database
         rb = new RemindrDatabase(getApplicationContext());
-
-
-
-
 
         // If there are no reminders display a message asking the user to create reminders
         List<Reminder> test = rb.getAllReminders();
@@ -96,7 +93,7 @@ public class ListReminderActivity extends AppCompatActivity {
         mAlarmReceiver = new AlarmReceiver();
     }
     // Multi select items in recycler view
-    private ActionMode.Callback mDeleteMode = new ModalMultiSelectorCallback(mMultiSelector) {
+   /* private ActionMode.Callback mDeleteMode = new ModalMultiSelectorCallback(mMultiSelector) {
 
         @Override
         public boolean onCreateActionMode(androidx.appcompat.view.ActionMode actionMode, Menu menu) {
@@ -165,7 +162,7 @@ public class ListReminderActivity extends AppCompatActivity {
             }
             return false;
         }
-    };
+    };*/
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         mAdapter.setItemCount(100);
@@ -206,11 +203,11 @@ public class ListReminderActivity extends AppCompatActivity {
     /*protected int getDefaultItemCount() {
         return 100;
     }*/
-    @Override
+  /*  @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_add_reminder, menu);
         return true;
-    }
+    }*/
 
 
     public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.VerticalItemHolder> {
@@ -302,7 +299,7 @@ public class ListReminderActivity extends AppCompatActivity {
 
         // UI and data class for recycler view items
         public  class VerticalItemHolder extends SwappingHolder
-                implements View.OnClickListener, View.OnLongClickListener {
+                implements View.OnClickListener {
             private TextView mTitleText, timeDisplay, mRepeatInfoText, tagDisplay;
             private ImageView mActiveImage , mThumbnailImage;
             private ColorGenerator mColorGenerator = ColorGenerator.DEFAULT;
@@ -313,10 +310,10 @@ public class ListReminderActivity extends AppCompatActivity {
             private Button menuButton2;
 
 
-            public VerticalItemHolder(final View itemView, SimpleAdapter adapter) {
+            public VerticalItemHolder(final View itemView, final SimpleAdapter adapter) {
                 super(itemView, mMultiSelector);
                 itemView.setOnClickListener(this);
-                itemView.setOnLongClickListener(this);
+                //itemView.setOnLongClickListener(this);
                 itemView.setLongClickable(true);
 
                 // Initialize adapter for the items
@@ -335,16 +332,41 @@ public class ListReminderActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         PopupMenu popupMenu = new PopupMenu(getApplicationContext(),menuButton2);
-
-                        //popupMenu.getMenuInflater().inflate(R.menu.list_menu, popupMenu.getMenu());
                         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                             @Override
                             public boolean onMenuItemClick(MenuItem item) {
-                                switch (item.getItemId()){
+                                switch (item.getItemId()) {
                                     case R.id.discard_reminder:
-                                        Toast.makeText(getApplicationContext(),
-                                                "Deleted",
-                                                Toast.LENGTH_SHORT).show();
+                                        mMultiSelector.setSelected(getAdapterPosition(),0,true);
+                                        // Get the reminder id associated with the recycler view item
+                                        for (int i = IDmap.size(); i >= 0; i--) {
+                                            if (mMultiSelector.isSelected(i,0)) {
+                                                int id = IDmap.get(i);
+                                                // Get reminder from reminder database using id
+                                                Reminder temp = rb.getReminder(id);
+                                                // Delete reminder
+                                                rb.deleteReminder(temp);
+                                                // Remove reminder from recycler view
+                                                mAdapter.removeItemSelected(i);
+                                                // Delete reminder alarm
+                                                mAlarmReceiver.cancelAlarm(getApplicationContext(), id);
+                                            }
+                                        }
+                                        // Clear selected items in recycler view
+                                        mMultiSelector.clearSelections();
+                                        // Recreate the recycler items
+                                        // This is done to remap the item and reminder ids
+                                        mAdapter.onDeleteItem(100);
+                                        Toast.makeText(getApplicationContext(), "Deleted", Toast.LENGTH_SHORT).show();
+                                        // To check is there are saved reminders
+                                        // If there are no reminders display a message asking the user to create reminders
+                                        List<Reminder> mTest = rb.getAllReminders();
+
+                                        if (mTest.isEmpty()) {
+                                            mNoReminderView.setVisibility(View.VISIBLE);
+                                        } else {
+                                            mNoReminderView.setVisibility(View.GONE);
+                                        }
                                         return true;
                                     case R.id.save_reminder:
 
@@ -352,10 +374,10 @@ public class ListReminderActivity extends AppCompatActivity {
                                         i.putExtra(EditReminderActivity.EXTRA_REMINDER_ID, IDmap);
                                         startActivityForResult(i, 1);
                                         return true;
-                                    default:
-                                        return false;
-                                }
 
+                                    default: break;
+                                }
+                                return false;
                             }
                         });
                         popupMenu.inflate(R.menu.list_menu);
@@ -369,13 +391,10 @@ public class ListReminderActivity extends AppCompatActivity {
                         popupMenu.show();
                     }
                 });
-
             }
-
             // On clicking a reminder item
             private void selectReminder(int mClickID) {
                 String mStringClickID = Integer.toString(mClickID);
-
                 // Create intent to edit the reminder
                 // Put reminder id as extra
                Intent i = new Intent(ListReminderActivity.this, EditReminderActivity.class);
@@ -384,27 +403,28 @@ public class ListReminderActivity extends AppCompatActivity {
             }
 
             // On clicking a reminder item
-            @Override
+           @Override
             public void onClick(View v) {
-                if (!mMultiSelector.tapSelection(this)) {
+               int mReminderClickID = IDmap.get(mTempPost);
+               selectReminder(mReminderClickID);
+               /* if (!mMultiSelector.tapSelection(this)) {
                     mTempPost = mList.getChildAdapterPosition(v);
 
-                    int mReminderClickID = IDmap.get(mTempPost);
-                    selectReminder(mReminderClickID);
+
 
                 } else if(mMultiSelector.getSelectedPositions().isEmpty()){
                     mAdapter.setItemCount(100);
-                }
+                }*/
             }
 
             // On long press enter action mode with context menu
-            @Override
+          /*  @Override
             public boolean onLongClick(View v) {
                 AppCompatActivity activity = ListReminderActivity.this;
-                activity.startSupportActionMode(mDeleteMode);
+                //activity.startSupportActionMode(mDeleteMode);
                 mMultiSelector.setSelected(this, true);
                 return true;
-            }
+            }*/
 
             // Set reminder title view
             public void setReminderTitle(String title) {
@@ -502,6 +522,8 @@ public class ListReminderActivity extends AppCompatActivity {
                 items.add(new SimpleAdapter.ReminderItem(Titles.get(i), DateAndTime.get(i), Repeats.get(i),
                         RepeatNos.get(i), RepeatTypes.get(i), Tags.get(i)));
                 IDmap.put(k, IDList.get(i));
+                System.out.println(k + " " + i + " " + IDList.get(i));
+
                 k++;
             }
             return items;
