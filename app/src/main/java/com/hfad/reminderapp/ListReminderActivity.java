@@ -163,10 +163,10 @@ public class ListReminderActivity extends AppCompatActivity {
             return false;
         }
     };*/
-    @Override
+   /* @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         mAdapter.setItemCount(100);
-    }
+    }*/
 
     // Recreate recycler view
     // This is done so that newly created reminders are displayed
@@ -369,10 +369,9 @@ public class ListReminderActivity extends AppCompatActivity {
                                         }
                                         return true;
                                     case R.id.save_reminder:
+                                        int mReminderClickID = IDmap.get(mTempPost);
+                                        selectReminder(mReminderClickID);
 
-                                        Intent i = new Intent(ListReminderActivity.this, EditReminderActivity.class);
-                                        i.putExtra(EditReminderActivity.EXTRA_REMINDER_ID, IDmap);
-                                        startActivityForResult(i, 1);
                                         return true;
 
                                     default: break;
@@ -395,22 +394,17 @@ public class ListReminderActivity extends AppCompatActivity {
             // On clicking a reminder item
             private void selectReminder(int mClickID) {
                 String mStringClickID = Integer.toString(mClickID);
-                // Create intent to edit the reminder
-                // Put reminder id as extra
                Intent i = new Intent(ListReminderActivity.this, EditReminderActivity.class);
                 i.putExtra(EditReminderActivity.EXTRA_REMINDER_ID, mStringClickID);
                 startActivityForResult(i, 1);
             }
 
-            // On clicking a reminder item
            @Override
             public void onClick(View v) {
+               mTempPost = mList.getChildAdapterPosition(v);
                int mReminderClickID = IDmap.get(mTempPost);
                selectReminder(mReminderClickID);
                /* if (!mMultiSelector.tapSelection(this)) {
-                    mTempPost = mList.getChildAdapterPosition(v);
-
-
 
                 } else if(mMultiSelector.getSelectedPositions().isEmpty()){
                     mAdapter.setItemCount(100);
@@ -522,7 +516,7 @@ public class ListReminderActivity extends AppCompatActivity {
                 items.add(new SimpleAdapter.ReminderItem(Titles.get(i), DateAndTime.get(i), Repeats.get(i),
                         RepeatNos.get(i), RepeatTypes.get(i), Tags.get(i)));
                 IDmap.put(k, IDList.get(i));
-                System.out.println(k + " " + i + " " + IDList.get(i));
+
 
                 k++;
             }

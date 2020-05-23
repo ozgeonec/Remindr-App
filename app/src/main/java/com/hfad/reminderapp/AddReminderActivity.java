@@ -208,7 +208,7 @@ public class AddReminderActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         tagChoice.setAdapter(adapter);
-        //mTag = tagChoice.getSelectedItem().toString();
+        
 
         //Alarm Setting
         addButton.setOnClickListener(new View.OnClickListener() {

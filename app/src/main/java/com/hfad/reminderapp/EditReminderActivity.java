@@ -56,10 +56,10 @@ public class EditReminderActivity extends AppCompatActivity {
     private int receivedID;
     private RemindrDatabase rb;
     private Reminder receivedReminder;
-    private Calendar mCalendar;
     private AlarmReceiver alarmReceiver;
     private String[] mDateSplit;
     private String[] mTimeSplit;
+    private Calendar mCalendar;
   
 
     // Constant values in milliseconds
@@ -72,9 +72,6 @@ public class EditReminderActivity extends AppCompatActivity {
 
     // Constant Intent String
     public static final String EXTRA_REMINDER_ID = "Reminder_ID";
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +88,6 @@ public class EditReminderActivity extends AppCompatActivity {
         dateDisplay = (TextView)findViewById(R.id.dateDisplay);
         clockDisplay = (TextView)findViewById(R.id.clocktext);
         tagChoice = (Spinner)findViewById(R.id.tagchoices);
-
         repeatSwitch = (Switch)findViewById(R.id.repswitch);
         mRepeatTypeText = (TextView)findViewById(R.id.repeatType);
         mRepeatNoText = (TextView)findViewById(R.id.repeatNoText);
@@ -103,12 +99,16 @@ public class EditReminderActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(R.string.app_name);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+        //Adapter for tags
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(EditReminderActivity.this,
                 R.array.tag_choices, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        tagChoice.setAdapter(adapter);
+
 
         // Get reminder id from intent
         receivedID = Integer.parseInt(getIntent().getStringExtra(EXTRA_REMINDER_ID));
+        System.out.println(receivedID);
         // Get reminder using reminder id
         rb = new RemindrDatabase(EditReminderActivity.this);
         receivedReminder = rb.getReminder(receivedID);
@@ -121,38 +121,30 @@ public class EditReminderActivity extends AppCompatActivity {
         mRepeatType = receivedReminder.getRepeatType();
         mTag = receivedReminder.getTagType();
 
-
-
         // Setup TextViews using reminder values
         dateDisplay.setText(mDate);
         clockDisplay.setText(mTime);
-        mRepeatNoText.setText(mRepeatNmbr);
-        mRepeatTypeText.setText(mRepeatType);
-        everyText.setText("Every");
-        everyText.setVisibility(View.GONE);
+        remindMe.setText(remindText);
+        tagChoice.setSelection(adapter.getPosition(mTag));
         //mRepeatText.setText("Off");
+        // Obtain Date and Time details
+        mCalendar = Calendar.getInstance();
+        alarmReceiver = new AlarmReceiver();
+
 
         // Setup repeat switch
         if (mRepeat.equals("false")) {
             repeatSwitch.setChecked(false);
             mRepeatText.setText(R.string.repeat_off);
+            everyText.setVisibility(View.GONE);
 
         } else if (mRepeat.equals("true")) {
             repeatSwitch.setChecked(true);
+            everyText.setVisibility(View.VISIBLE);
+            everyText.setText("Every");
+            mRepeatNoText.setText(mRepeatNmbr);
+            mRepeatTypeText.setText(mRepeatType);
         }
-        // Obtain Date and Time details
-        mCalendar = Calendar.getInstance();
-        alarmReceiver = new AlarmReceiver();
-
-        mDateSplit = mDate.split("/");
-        mTimeSplit = mTime.split(":");
-
-        mDay = Integer.parseInt(mDateSplit[0]);
-        mMonth = Integer.parseInt(mDateSplit[1]);
-        mYear = Integer.parseInt(mDateSplit[2]);
-        mHour = Integer.parseInt(mTimeSplit[0]);
-        mMinute = Integer.parseInt(mTimeSplit[1]);
-
 
         //Setup Reminder Title
         remindMe.addTextChangedListener(new TextWatcher() {
@@ -232,74 +224,66 @@ public class EditReminderActivity extends AppCompatActivity {
 
             }
         };
-
-        //Tag choice
-
-
-        tagChoice.setAdapter(adapter);
-
-        tagChoice.setOnItemSelectedListener(new SpinnerActivity());
-        mTag = tagChoice.getSelectedItem().toString();
-
-
-
         //Alarm Setting
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                receivedReminder.setTitle(remindText);
-                receivedReminder.setDate(mDate);
-                receivedReminder.setTime(mTime);
-                receivedReminder.setRepeat(mRepeat);
-                receivedReminder.setRepeatNmbr(mRepeatNmbr);
-                receivedReminder.setRepeatType(mRepeatType);
-                receivedReminder.setTagType(mTag);
-
-                // Updating Reminder
-                rb.updateReminder(receivedReminder);
-
-                mCalendar.set(Calendar.MONTH, --mMonth);
-                mCalendar.set(Calendar.YEAR, mYear);
-                mCalendar.set(Calendar.DAY_OF_MONTH, mDay);
-                mCalendar.set(Calendar.HOUR_OF_DAY, mHour);
-                mCalendar.set(Calendar.MINUTE, mMinute);
-                mCalendar.set(Calendar.SECOND, 0);
-                mTag = tagChoice.getSelectedItem().toString();
-
-                alarmReceiver.cancelAlarm(getApplicationContext(), receivedID);
-
-                // Check repeat type
-                if (mRepeatType.equals("Minute(s)")) {
-                    mRepeatTime = Integer.parseInt(mRepeatNmbr) * milMinute;
-                } else if (mRepeatType.equals("Hour(s)")) {
-                    mRepeatTime = Integer.parseInt(mRepeatNmbr) * milHour;
-                } else if (mRepeatType.equals("Day(s)")) {
-                    mRepeatTime = Integer.parseInt(mRepeatNmbr) * milDay;
-                } else if (mRepeatType.equals("Week(s)")) {
-                    mRepeatTime = Integer.parseInt(mRepeatNmbr) * milWeek;
-                } else if (mRepeatType.equals("Month(s)")) {
-                    mRepeatTime = Integer.parseInt(mRepeatNmbr) * milMonth;
-                } else if(mRepeatType.equals("Year(s)")){
-                    mRepeatTime = Integer.parseInt(mRepeatNmbr) * milYear;
-                }
-
-                if(repeatSwitch.isChecked()){
-                    mRepeat = "true";
-                    alarmReceiver.setRepeatAlarm(getApplicationContext(), mCalendar, receivedID, mRepeatTime);
-                    Toast.makeText(getApplicationContext(),"Edited with Repeat",Toast.LENGTH_SHORT).show();
-
-                }else{
-                    alarmReceiver.setAlarm(getApplicationContext(),mCalendar, receivedID);
-                    Toast.makeText(getApplicationContext(),"Edited",Toast.LENGTH_SHORT).show();
-
-                }
-                Intent intent = new Intent(v.getContext(), ListReminderActivity.class);
-                startActivity(intent);
-                onBackPressed();
+              updateReminderNew();
 
             }
         });
 
+    }
+    public void updateReminderNew(){
+        alarmReceiver.cancelAlarm(getApplicationContext(), receivedID);
+
+        mTag = tagChoice.getSelectedItem().toString();
+
+        mCalendar.set(Calendar.MONTH, --mMonth);
+        mCalendar.set(Calendar.YEAR, mYear);
+        mCalendar.set(Calendar.DAY_OF_MONTH, mDay);
+        mCalendar.set(Calendar.HOUR_OF_DAY, mHour);
+        mCalendar.set(Calendar.MINUTE, mMinute);
+        mCalendar.set(Calendar.SECOND, 0);
+
+        // Check repeat type
+        if (mRepeatType.equals("Minute(s)")) {
+            mRepeatTime = Integer.parseInt(mRepeatNmbr) * milMinute;
+        } else if (mRepeatType.equals("Hour(s)")) {
+            mRepeatTime = Integer.parseInt(mRepeatNmbr) * milHour;
+        } else if (mRepeatType.equals("Day(s)")) {
+            mRepeatTime = Integer.parseInt(mRepeatNmbr) * milDay;
+        } else if (mRepeatType.equals("Week(s)")) {
+            mRepeatTime = Integer.parseInt(mRepeatNmbr) * milWeek;
+        } else if (mRepeatType.equals("Month(s)")) {
+            mRepeatTime = Integer.parseInt(mRepeatNmbr) * milMonth;
+        } else if(mRepeatType.equals("Year(s)")){
+            mRepeatTime = Integer.parseInt(mRepeatNmbr) * milYear;
+        }
+        receivedReminder.setTitle(remindText);
+        receivedReminder.setDate(mDate);
+        receivedReminder.setTime(mTime);
+        receivedReminder.setRepeat(mRepeat);
+        receivedReminder.setRepeatNmbr(mRepeatNmbr);
+        receivedReminder.setRepeatType(mRepeatType);
+        receivedReminder.setTagType(mTag);
+        // Updating Reminder
+        rb.updateReminder(receivedReminder);
+
+
+        if(repeatSwitch.isChecked()){
+            mRepeat = "true";
+            alarmReceiver.setRepeatAlarm(getApplicationContext(), mCalendar, receivedID, mRepeatTime);
+            Toast.makeText(getApplicationContext(),"Edited with Repeat",Toast.LENGTH_SHORT).show();
+
+        }else{
+            alarmReceiver.setAlarm(getApplicationContext(),mCalendar, receivedID);
+            Toast.makeText(getApplicationContext(),"Edited",Toast.LENGTH_SHORT).show();
+
+        }
+        Intent intent = new Intent(getApplicationContext(), ListReminderActivity.class);
+        startActivity(intent);
+        onBackPressed();
     }
     // On pressing the back button
     @Override
@@ -383,12 +367,12 @@ public class EditReminderActivity extends AppCompatActivity {
                         if (input.getText().toString().length() == 0) {
                             mRepeatNmbr = Integer.toString(1);
                             mRepeatNoText.setText(mRepeatNmbr);
-                            mRepeatText.setText("Every " + mRepeatNoText+ " " + mRepeatTypeText + "(s)");
+                           // mRepeatText.setText("Every " + mRepeatNoText+ " " + mRepeatTypeText + "(s)");
                         }
                         else {
                             mRepeatNmbr = input.getText().toString().trim();
                             mRepeatNoText.setText(mRepeatNmbr);
-                            mRepeatText.setText("Every " + mRepeatNoText + " " + mRepeatTypeText + "(s)");
+                            //mRepeatText.setText("Every " + mRepeatNoText + " " + mRepeatTypeText + "(s)");
                         }
                     }
                 });
