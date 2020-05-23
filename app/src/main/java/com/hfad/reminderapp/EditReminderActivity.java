@@ -5,8 +5,10 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
@@ -39,6 +41,7 @@ public class EditReminderActivity extends AppCompatActivity {
     private ImageButton clockButton;
     private ImageButton repeatButton;
     private ImageButton addButton;
+    private ImageButton settings;
     private DatePickerDialog.OnDateSetListener dateSetListener;
     private TimePickerDialog.OnTimeSetListener timePickerListener;
     private Spinner tagChoice;
@@ -73,6 +76,7 @@ public class EditReminderActivity extends AppCompatActivity {
     // Constant Intent String
     public static final String EXTRA_REMINDER_ID = "Reminder_ID";
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,10 +99,12 @@ public class EditReminderActivity extends AppCompatActivity {
         everyText = (TextView)findViewById(R.id.everyText);
         toolbar = (Toolbar)findViewById(R.id.toolbar);
 
+
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(R.string.app_name);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+
         //Adapter for tags
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(EditReminderActivity.this,
                 R.array.tag_choices, android.R.layout.simple_spinner_item);
@@ -270,7 +276,6 @@ public class EditReminderActivity extends AppCompatActivity {
         // Updating Reminder
         rb.updateReminder(receivedReminder);
 
-
         if(repeatSwitch.isChecked()){
             mRepeat = "true";
             alarmReceiver.setRepeatAlarm(getApplicationContext(), mCalendar, receivedID, mRepeatTime);
@@ -281,8 +286,8 @@ public class EditReminderActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(),"Edited",Toast.LENGTH_SHORT).show();
 
         }
-        Intent intent = new Intent(getApplicationContext(), ListReminderActivity.class);
-        startActivity(intent);
+        Intent intent2 = new Intent(getApplicationContext(), ListReminderActivity.class);
+        startActivity(intent2);
         onBackPressed();
     }
     // On pressing the back button
@@ -383,6 +388,4 @@ public class EditReminderActivity extends AppCompatActivity {
         });
         alert.show();
     }
-
-
 }

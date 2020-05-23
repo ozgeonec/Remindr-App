@@ -203,7 +203,7 @@ public class ListReminderActivity extends AppCompatActivity {
     /*protected int getDefaultItemCount() {
         return 100;
     }*/
-  /*  @Override
+  /* @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_add_reminder, menu);
         return true;
@@ -368,12 +368,25 @@ public class ListReminderActivity extends AppCompatActivity {
                                             mNoReminderView.setVisibility(View.GONE);
                                         }
                                         return true;
-                                    case R.id.save_reminder:
+                                    case R.id.edit_reminder:
                                         int mReminderClickID = IDmap.get(mTempPost);
                                         selectReminder(mReminderClickID);
 
                                         return true;
-
+                                    case R.id.share:
+                                        mMultiSelector.setSelected(getAdapterPosition(),0,true);
+                                        for (int i = IDmap.size(); i >= 0; i--) {
+                                            if (mMultiSelector.isSelected(i,0)) {
+                                                int id = IDmap.get(i);
+                                                // Get reminder from reminder database using id
+                                                Reminder temp = rb.getReminder(id);
+                                                final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+                                                emailIntent.setType("plain/text");
+                                                emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, Reminder.toString(temp));
+                                                startActivity(Intent.createChooser(emailIntent,"Sent"));
+                                            }
+                                        }
+                                        return true;
                                     default: break;
                                 }
                                 return false;
@@ -404,21 +417,8 @@ public class ListReminderActivity extends AppCompatActivity {
                mTempPost = mList.getChildAdapterPosition(v);
                int mReminderClickID = IDmap.get(mTempPost);
                selectReminder(mReminderClickID);
-               /* if (!mMultiSelector.tapSelection(this)) {
 
-                } else if(mMultiSelector.getSelectedPositions().isEmpty()){
-                    mAdapter.setItemCount(100);
-                }*/
             }
-
-            // On long press enter action mode with context menu
-          /*  @Override
-            public boolean onLongClick(View v) {
-                AppCompatActivity activity = ListReminderActivity.this;
-                //activity.startSupportActionMode(mDeleteMode);
-                mMultiSelector.setSelected(this, true);
-                return true;
-            }*/
 
             // Set reminder title view
             public void setReminderTitle(String title) {

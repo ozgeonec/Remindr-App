@@ -37,5 +37,9 @@
     <string name="menu">Menu</string>
     <string name="_8942">⋮</string>
     <string name="coloricon">coloricon</string>
+    <string name="settings">Settings</string>
+    <string name="share">Share</string>
+    <string name="vibration">Vibration</string>
+    <string name="ringtone">RingTone</string>
 
 </resources>

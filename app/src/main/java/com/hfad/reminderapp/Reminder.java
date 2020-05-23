@@ -91,5 +91,15 @@ public class Reminder {
         this.tagType=tagType;
     }
 
+    public static String toString(Reminder reminder) {
+        String text = "";
+        text +=
+                "Title: " + reminder.getTitle() + "\n"+
+                "Date: " + reminder.getDate() + "\n" +
+                "Time: " + reminder.getTime() + "\n" +
+                "Tag: " + reminder.getTagType() + "\n";
+        return text;
+    }
+
 
 }

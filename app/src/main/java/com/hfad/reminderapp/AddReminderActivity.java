@@ -7,8 +7,10 @@ import android.app.*;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.media.RingtoneManager;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -24,6 +26,7 @@ import androidx.appcompat.widget.Toolbar;
 import java.util.Calendar;
 import java.util.Objects;
 
+import static com.hfad.reminderapp.SettingsActivity.vibrationKey;
 
 
 public class AddReminderActivity extends AppCompatActivity {
@@ -40,6 +43,7 @@ public class AddReminderActivity extends AppCompatActivity {
     private ImageButton clockButton;
     private ImageButton repeatButton;
     private ImageButton addButton;
+    private ImageButton settings;
     private DatePickerDialog.OnDateSetListener dateSetListener;
     private TimePickerDialog.OnTimeSetListener timePickerListener;
     private Spinner tagChoice;
@@ -55,6 +59,7 @@ public class AddReminderActivity extends AppCompatActivity {
     private Switch repeatSwitch;
     private TextView everyText;
     private Calendar mCalendar;
+    private TextView settingsText;
 
     // Constant values in milliseconds
     private static final long milMinute = 60000L;
@@ -63,7 +68,6 @@ public class AddReminderActivity extends AppCompatActivity {
     private static final long milWeek = 604800000L;
     private static final long milMonth = 2592000000L;
     private static final long milYear = 155520000000L;
-
 
 
     @Override
@@ -89,12 +93,12 @@ public class AddReminderActivity extends AppCompatActivity {
         everyText = (TextView)findViewById(R.id.everyText);
         toolbar = (Toolbar)findViewById(R.id.toolbar);
 
+
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(R.string.app_name);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
-      
 
         //Auto-settings
         mCalendar = Calendar.getInstance();
@@ -239,20 +243,23 @@ public class AddReminderActivity extends AppCompatActivity {
                 } else if(mRepeatType.equals("Year(s)")){
                     mRepeatTime = Integer.parseInt(mRepeatNmbr) * milYear;
                 }
+
                 // Creating Reminder
                 int ID = rb.addReminder(new Reminder(remindText, mDate, mTime, mRepeat, mRepeatNmbr, mRepeatType, mTag));
+
+                //Repeat On/Off
                 if(repeatSwitch.isChecked()){
                     mRepeat = "true";
                     new AlarmReceiver().setRepeatAlarm(getApplicationContext(), mCalendar, ID, mRepeatTime);
                     Toast.makeText(getApplicationContext(),"Saved with Repeat",Toast.LENGTH_SHORT).show();
-
                 }else{
                     new AlarmReceiver().setAlarm(getApplicationContext(),mCalendar, ID);
                     Toast.makeText(getApplicationContext(),"Saved",Toast.LENGTH_SHORT).show();
-
                 }
-                Intent intent = new Intent(v.getContext(), ListReminderActivity.class);
-                startActivity(intent);
+
+                //Going main page
+                Intent intent2 = new Intent(v.getContext(), ListReminderActivity.class);
+                startActivity(intent2);
             onBackPressed();
             }
         });
@@ -265,7 +272,7 @@ public class AddReminderActivity extends AppCompatActivity {
     // Creating the menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_add_reminder, menu);
+        getMenuInflater().inflate(R.menu.small_menu, menu);
         return true;
     }
     @Override

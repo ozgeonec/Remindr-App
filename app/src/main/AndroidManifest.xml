@@ -20,6 +20,7 @@
         <receiver android:name=".AlarmReceiver" android:process=":remote" />
         <activity android:name=".AddReminderActivity"/>
         <activity android:name=".EditReminderActivity"/>
+        <activity android:name=".SettingsActivity"/>
     </application>
 
 </manifest>
