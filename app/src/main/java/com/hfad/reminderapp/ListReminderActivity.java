@@ -2,11 +2,12 @@ package com.hfad.reminderapp;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.*;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -47,7 +48,17 @@ public class ListReminderActivity extends AppCompatActivity {
     private MultiSelector mMultiSelector = new MultiSelector();
     private AlarmReceiver mAlarmReceiver;
     private TextView tagDisplay;
+    private TextDrawable mDrawableBuilder;
+    private ImageView mThumbnailImage;
+    private int newReminderCount=0;
+    private int oldReminderCount=0;
+    private TextView reminderCountView;
+    private TextView oldReminderCountView;
+    private String newReminderCountText;
+    private String oldReminderCountText;
 
+    //SharedPreferences preferences;
+    //final String darkModeKey = "darkModeKey";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,12 +70,21 @@ public class ListReminderActivity extends AppCompatActivity {
         addReminderButton = (FloatingActionButton)findViewById(R.id.bigAddButton);
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         tagDisplay = (TextView)findViewById(R.id.tagdisplay);
+        mThumbnailImage = (ImageView) findViewById(R.id.delete_image);
+        reminderCountView = (TextView)findViewById(R.id.activeReminders);
+        oldReminderCountView = (TextView)findViewById(R.id.finishedReminders);
+
+
+        newReminderCountText = Integer.toString(newReminderCount);
+        oldReminderCountText = Integer.toString(oldReminderCount);
+
 
         //Toolbar settings
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(R.string.app_name);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+
 
         // Initialize reminder database
         rb = new RemindrDatabase(getApplicationContext());
@@ -92,84 +112,8 @@ public class ListReminderActivity extends AppCompatActivity {
         });
         mAlarmReceiver = new AlarmReceiver();
     }
-    // Multi select items in recycler view
-   /* private ActionMode.Callback mDeleteMode = new ModalMultiSelectorCallback(mMultiSelector) {
-
-        @Override
-        public boolean onCreateActionMode(androidx.appcompat.view.ActionMode actionMode, Menu menu) {
-            getMenuInflater().inflate(R.menu.menu_add_reminder, menu);
-            return true;
-        }
-
-        @Override
-        public boolean onActionItemClicked(androidx.appcompat.view.ActionMode actionMode, MenuItem menuItem) {
-            switch (menuItem.getItemId()) {
-
-                // On clicking discard reminders
-                case R.id.discard_reminder:
-                    // Close the context menu
-                    actionMode.finish();
-
-                    // Get the reminder id associated with the recycler view item
-                    for (int i = IDmap.size(); i >= 0; i--) {
-                        if (mMultiSelector.isSelected(i, 0)) {
-                            int id = IDmap.get(i);
-
-                            // Get reminder from reminder database using id
-                            Reminder temp = rb.getReminder(id);
-                            // Delete reminder
-                            rb.deleteReminder(temp);
-                            // Remove reminder from recycler view
-                            mAdapter.removeItemSelected(i);
-                            // Delete reminder alarm
-                            mAlarmReceiver.cancelAlarm(getApplicationContext(), id);
-                        }
-                    }
-
-                    // Clear selected items in recycler view
-                    mMultiSelector.clearSelections();
-                    // Recreate the recycler items
-                    // This is done to remap the item and reminder ids
-                    mAdapter.onDeleteItem(100);
-
-                    // Display toast to confirm delete
-                    Toast.makeText(getApplicationContext(),
-                            "Deleted",
-                            Toast.LENGTH_SHORT).show();
-
-                    // To check is there are saved reminders
-                    // If there are no reminders display a message asking the user to create reminders
-                    List<Reminder> mTest = rb.getAllReminders();
-
-                    if (mTest.isEmpty()) {
-                        mNoReminderView.setVisibility(View.VISIBLE);
-                    } else {
-                        mNoReminderView.setVisibility(View.GONE);
-                    }
-
-                    return true;
-
-                // On clicking save reminders
-                case R.id.save_reminder:
-                    // Close the context menu
-                    actionMode.finish();
-                    // Clear selected items in recycler view
-                    mMultiSelector.clearSelections();
-                    return true;
-
-                default:
-                    break;
-            }
-            return false;
-        }
-    };*/
-   /* @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mAdapter.setItemCount(100);
-    }*/
 
     // Recreate recycler view
-    // This is done so that newly created reminders are displayed
     @Override
     public void onResume(){
         super.onResume();
@@ -186,14 +130,6 @@ public class ListReminderActivity extends AppCompatActivity {
 
         //mAdapter.setItemCount(100);
     }
-    // Setup menu
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        return super.onOptionsItemSelected(item);
-
-    }
-
 
     // Layout manager for recycler view
     protected RecyclerView.LayoutManager getLayoutManager() {
@@ -203,12 +139,11 @@ public class ListReminderActivity extends AppCompatActivity {
     /*protected int getDefaultItemCount() {
         return 100;
     }*/
-  /* @Override
+  /*  @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_add_reminder, menu);
+        getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }*/
-
 
     public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.VerticalItemHolder> {
 
@@ -228,12 +163,22 @@ public class ListReminderActivity extends AppCompatActivity {
         public void onDeleteItem(int count) {
             mItems.clear();
             mItems.addAll(generateData(count));
+            if(newReminderCount!=0){
+                newReminderCount--;
+                newReminderCountText = Integer.toString(newReminderCount);
+                reminderCountView.setText(newReminderCountText);
+            }else{
+                newReminderCount--;
+                newReminderCountText = Integer.toString(newReminderCount);
+                reminderCountView.setText(newReminderCountText);
+            }
         }
 
         public void removeItemSelected(int selected) {
             if (mItems.isEmpty()) return;
             mItems.remove(selected);
             notifyItemRemoved(selected);
+
         }
 
         // View holder for recycler view items
@@ -250,11 +195,22 @@ public class ListReminderActivity extends AppCompatActivity {
         public void onBindViewHolder(VerticalItemHolder itemHolder, int position) {
 
             SimpleAdapter.ReminderItem item = mItems.get(position);
-
             itemHolder.setReminderTitle(item.mTitle);
             itemHolder.setReminderDateTime(item.mDateTime);
             itemHolder.setReminderRepeatInfo(item.mRepeat, item.mRepeatNo, item.mRepeatType);
             itemHolder.setTagType(item.mTagType);
+            if(newReminderCount<=20){
+                newReminderCount++;
+                newReminderCountText = Integer.toString(newReminderCount);
+                reminderCountView.setText(newReminderCountText);
+                //oldReminderCountView.setText(oldReminderCountText);
+            }else{
+                newReminderCount=1;
+                newReminderCountText = Integer.toString(newReminderCount);
+                reminderCountView.setText(newReminderCountText);
+                //oldReminderCountView.setText(oldReminderCountText);
+            }
+
         }
 
         @Override
@@ -313,8 +269,7 @@ public class ListReminderActivity extends AppCompatActivity {
             public VerticalItemHolder(final View itemView, final SimpleAdapter adapter) {
                 super(itemView, mMultiSelector);
                 itemView.setOnClickListener(this);
-                //itemView.setOnLongClickListener(this);
-                itemView.setLongClickable(true);
+                //itemView.setLongClickable(true);
 
                 // Initialize adapter for the items
                 mAdapter = adapter;
@@ -350,6 +305,15 @@ public class ListReminderActivity extends AppCompatActivity {
                                                 mAdapter.removeItemSelected(i);
                                                 // Delete reminder alarm
                                                 mAlarmReceiver.cancelAlarm(getApplicationContext(), id);
+                                                if(newReminderCount!=0){
+                                                    newReminderCount--;
+                                                    newReminderCountText = Integer.toString(newReminderCount);
+                                                    reminderCountView.setText(newReminderCountText);
+                                                }else{
+                                                    newReminderCount--;
+                                                    newReminderCountText = Integer.toString(newReminderCount);
+                                                    reminderCountView.setText(newReminderCountText);
+                                                }
                                             }
                                         }
                                         // Clear selected items in recycler view
@@ -357,6 +321,7 @@ public class ListReminderActivity extends AppCompatActivity {
                                         // Recreate the recycler items
                                         // This is done to remap the item and reminder ids
                                         mAdapter.onDeleteItem(100);
+
                                         Toast.makeText(getApplicationContext(), "Deleted", Toast.LENGTH_SHORT).show();
                                         // To check is there are saved reminders
                                         // If there are no reminders display a message asking the user to create reminders
@@ -387,6 +352,47 @@ public class ListReminderActivity extends AppCompatActivity {
                                             }
                                         }
                                         return true;
+                                    case R.id.mark:
+                                        mMultiSelector.setSelected(getAdapterPosition(),0,true);
+                                        for (int i = IDmap.size(); i >= 0; i--) {
+                                            if (mMultiSelector.isSelected(i,0)) {
+                                                int id = IDmap.get(i);
+                                                // Get reminder from reminder database using id
+                                                Reminder temp = rb.getReminder(id);
+                                                // Delete reminder
+                                                rb.deleteReminder(temp);
+                                                // Remove reminder from recycler view
+                                                mAdapter.removeItemSelected(i);
+                                                // Delete reminder alarm
+                                                mAlarmReceiver.cancelAlarm(getApplicationContext(), id);
+                                            }
+                                        }
+                                        mMultiSelector.clearSelections();
+                                        // Recreate the recycler items
+                                        // This is done to remap the item and reminder ids
+                                        if(newReminderCount!=0){
+                                            newReminderCount--;
+                                            newReminderCountText = Integer.toString(newReminderCount);
+                                            reminderCountView.setText(newReminderCountText);
+                                        }else{
+                                            newReminderCount--;
+                                            newReminderCountText = Integer.toString(newReminderCount);
+                                            reminderCountView.setText(newReminderCountText);
+                                        }
+                                        if(oldReminderCount<=20){
+                                            oldReminderCount++;
+                                            oldReminderCountText = Integer.toString(oldReminderCount);
+                                            oldReminderCountView.setText(oldReminderCountText);
+                                        }else{
+                                            oldReminderCount=1;
+                                            oldReminderCountText = Integer.toString(oldReminderCount);
+                                            oldReminderCountView.setText(oldReminderCountText);
+                                        }
+
+                                        mAdapter.onDeleteItem(100);
+                                        Toast.makeText(getApplicationContext(), "Marked Finished", Toast.LENGTH_SHORT).show();
+                                        return true;
+
                                     default: break;
                                 }
                                 return false;
@@ -423,25 +429,12 @@ public class ListReminderActivity extends AppCompatActivity {
             // Set reminder title view
             public void setReminderTitle(String title) {
                 mTitleText.setText(title);
-                String letter = "A";
-
-                if(title != null && !title.isEmpty()) {
-                    letter = title.substring(0, 1);
-                }
-
-                int color = mColorGenerator.getRandomColor();
-
-                // Create a circular icon consisting of  a random background colour and first letter of title
-                mDrawableBuilder = TextDrawable.builder()
-                        .buildRound(letter, color);
-                mThumbnailImage.setImageDrawable(mDrawableBuilder);
             }
 
             // Set date and time views
             public void setReminderDateTime(String datetime) {
                 dateDisplay.setText(datetime);
             }
-
             // Set repeat views
             public void setReminderRepeatInfo(String repeat, String repeatNo, String repeatType) {
                 if(repeat.equals("true")){
@@ -450,14 +443,41 @@ public class ListReminderActivity extends AppCompatActivity {
                     mRepeatInfoText.setText("Repeat Off");
                 }
             }
+            //Set tag type
             public void setTagType(String tagType){
                 tagDisplay.setText(tagType);
+                int color;
+                if (tagType.equals("Birthday")) {
+                    color = Color.YELLOW;
+                    mDrawableBuilder = TextDrawable.builder()
+                            .buildRound(String.valueOf(mTitleText).substring(0,1),color);
+                    mThumbnailImage.setImageDrawable(mDrawableBuilder);
+                }
+                else if(tagType.equals("Work")){
+                    color = Color.CYAN;
+                    mDrawableBuilder = TextDrawable.builder()
+                            .buildRound(String.valueOf(mTitleText).substring(0,1),color);
+                    mThumbnailImage.setImageDrawable(mDrawableBuilder);
+                }
+                else if(tagType.equals("General")){
+                    color = Color.GREEN;
+                    mDrawableBuilder = TextDrawable.builder()
+                            .buildRound(String.valueOf(mTitleText).substring(0,1),color);
+                    mThumbnailImage.setImageDrawable(mDrawableBuilder);
+                }
+                else if(tagType.equals("Personal")){
+                    color = Color.MAGENTA;
+                    mDrawableBuilder = TextDrawable.builder()
+                            .buildRound(String.valueOf(mTitleText).substring(0,1),color);
+                    mThumbnailImage.setImageDrawable(mDrawableBuilder);
+                }
+                else if(tagType.equals("Health")){
+                    color = Color.BLUE;
+                    mDrawableBuilder = TextDrawable.builder()
+                            .buildRound(String.valueOf(mTitleText).substring(0,1),color);
+                    mThumbnailImage.setImageDrawable(mDrawableBuilder);
+                }
             }
-
-            // Set active image as on or off
-            /*public void setActiveImage(String active){
-
-                    mActiveImage.setImageResource(R.drawable.bell); }*/
         }
 
         // Generate random test data
@@ -523,5 +543,4 @@ public class ListReminderActivity extends AppCompatActivity {
             return items;
         }
     }
-
 }

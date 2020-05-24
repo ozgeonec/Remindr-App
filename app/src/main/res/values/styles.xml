@@ -20,12 +20,21 @@
         <item name="android:textSize">40sp</item>
         <item name="android:fontFamily">@font/spirax_font</item>
     </style>
+    <style name="Numbers" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:textSize">40sp</item>
+        <item name="android:fontFamily">@font/spirax_font</item>
+    </style>
     <style name="remind_me">
         <item name="android:textSize">40sp</item>
         <item name="android:textColor">#FFFFFF</item>
     </style>
     <style name="dark">
         <item name="android:textSize">20sp</item>
+        <item name="android:textColor">#32393F</item>
+    </style>
+    <style name="dark2">
+        <item name="android:textSize">15sp</item>
         <item name="android:textColor">#32393F</item>
     </style>
     <style name="palegrey">

@@ -3,6 +3,9 @@
           package="com.hfad.reminderapp">
 
     <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.Manifest.permission#WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <application
             android:allowBackup="true"
             android:icon="@drawable/logo"
@@ -11,13 +14,18 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <activity android:name=".ListReminderActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.SEND" />
+                <action android:name="android.intent.action.INPUT_METHOD_CHANGED" />
+                <action android:name="android.intent.action.USER_PRESENT"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <receiver android:name=".AlarmReceiver" android:process=":remote" />
+        <receiver android:name=".BootReceiver" android:process=":remote" />
         <activity android:name=".AddReminderActivity"/>
         <activity android:name=".EditReminderActivity"/>
         <activity android:name=".SettingsActivity"/>

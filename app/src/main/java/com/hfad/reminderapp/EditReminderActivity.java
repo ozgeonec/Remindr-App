@@ -296,11 +296,11 @@ public class EditReminderActivity extends AppCompatActivity {
         super.onBackPressed();
     }
     // Creating the menu
-    @Override
+   /* @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_add_reminder, menu);
         return true;
-    }
+    }*/
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // On clicking the back arrow

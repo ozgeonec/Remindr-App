@@ -2,15 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/discard_reminder"
-          android:icon="@drawable/history2"
           android:title="Delete"
           app:showAsAction="ifRoom" />
 
     <item android:id="@+id/edit_reminder"
-          android:icon="@drawable/logo"
           android:title="Edit"
           app:showAsAction="ifRoom" />
     <item
             android:id="@+id/share"
             android:title="@string/share"/>
+    <item
+            android:id="@+id/mark"
+            android:title="Mark as Complete"/>
 </menu>

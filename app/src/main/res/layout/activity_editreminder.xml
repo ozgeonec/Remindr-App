@@ -16,7 +16,7 @@
             app:titleTextColor="@color/colorAccent"
             app:titleTextAppearance="@style/MyTextTitle"
             app:title="@string/app_name"
-            app:titleMarginStart="135dp"
+            app:titleMarginStart="90dp"
             android:theme="@style/ToolbarTheme"/>
 
     <LinearLayout

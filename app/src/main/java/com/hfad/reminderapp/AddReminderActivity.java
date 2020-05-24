@@ -70,6 +70,7 @@ public class AddReminderActivity extends AppCompatActivity {
     private static final long milYear = 155520000000L;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,7 +114,7 @@ public class AddReminderActivity extends AppCompatActivity {
 
         mRepeat = "false";
         mRepeatNmbr = Integer.toString(1);
-        mRepeatType = "Hour";
+        mRepeatType = "Hour(s)";
 
 
         // Setup TextViews using reminder values
@@ -228,7 +229,6 @@ public class AddReminderActivity extends AppCompatActivity {
                 mCalendar.set(Calendar.SECOND, 0);
                 mTag = tagChoice.getSelectedItem().toString();
 
-
                 // Check repeat type
                 if (mRepeatType.equals("Minute(s)")) {
                     mRepeatTime = Integer.parseInt(mRepeatNmbr) * milMinute;
@@ -269,12 +269,8 @@ public class AddReminderActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
     }
-    // Creating the menu
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.small_menu, menu);
-        return true;
-    }
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // On clicking the back arrow

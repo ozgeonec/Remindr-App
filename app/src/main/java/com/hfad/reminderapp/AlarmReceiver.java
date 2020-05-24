@@ -15,8 +15,8 @@ import android.os.SystemClock;
 import android.os.Vibrator;
 import android.widget.Toast;
 import androidx.core.app.NotificationCompat;
-
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * @author ozgeonec
@@ -27,6 +27,35 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Toast.makeText(context,"Saved",Toast.LENGTH_SHORT).show();
+        NotificationHelper notificationHelper = new NotificationHelper(context);
+        NotificationCompat.Builder nb = notificationHelper.getChannelNotification();
+        notificationHelper.getManager().notify(1, nb.build());
+        Notification notification = nb.build();
+
+        //notification.defaults |= Notification.DEFAULT_VIBRATE;
+        //notification.defaults |= Notification.DEFAULT_SOUND;
+        Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        if (vibrator != null) {
+            vibrator.vibrate(2000);
+        }
+        Uri alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        Ringtone ring = RingtoneManager.getRingtone(context, alert);
+
+        if(ring == null){
+
+            alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            ring = RingtoneManager.getRingtone(context, alert);
+
+            if(ring == null){
+                alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+                ring = RingtoneManager.getRingtone(context, alert);
+            }
+        }
+        if(ring != null){
+            ring.play();
+        }
+        /*Toast.makeText(context, "Intent Detected.", Toast.LENGTH_LONG).show();
         int mReceivedID = Integer.parseInt(intent.getStringExtra(EditReminderActivity.EXTRA_REMINDER_ID));
 
         // Get notification title from Reminder Database
@@ -38,7 +67,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         Intent editIntent = new Intent(context, EditReminderActivity.class);
         editIntent.putExtra(EditReminderActivity.EXTRA_REMINDER_ID, Integer.toString(mReceivedID));
         PendingIntent mClick = PendingIntent.getActivity(context, mReceivedID, editIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        long[] vibration = intent.getLongArrayExtra("Vibration");
+
         // Create Notification
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
                 .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher))
@@ -48,12 +77,11 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setContentText(mTitle)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setContentIntent(mClick)
-                .setVibrate(vibration)
                 .setAutoCancel(true)
                 .setOnlyAlertOnce(true);
 
         NotificationManager nManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        nManager.notify(mReceivedID, mBuilder.build());
+        nManager.notify(mReceivedID, mBuilder.build());*/
 
     }
 
@@ -62,8 +90,8 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         // Put Reminder ID in Intent Extra
         Intent intent = new Intent(context, AlarmReceiver.class);
-        intent.putExtra(EditReminderActivity.EXTRA_REMINDER_ID, Integer.toString(ID));
-        mPendingIntent = PendingIntent.getBroadcast(context, ID, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        //intent.putExtra(EditReminderActivity.EXTRA_REMINDER_ID, Integer.toString(ID));
+        mPendingIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         // Calculate notification time
         Calendar c = Calendar.getInstance();
@@ -74,6 +102,12 @@ public class AlarmReceiver extends BroadcastReceiver {
         mAlarmManager.set(AlarmManager.ELAPSED_REALTIME,
                 SystemClock.elapsedRealtime() + diffTime,
                 mPendingIntent);
+        // Restart alarm if device is rebooted
+        /*ComponentName receiver = new ComponentName(context, BootReceiver.class);
+        PackageManager pm = context.getPackageManager();
+        pm.setComponentEnabledSetting(receiver,
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                PackageManager.DONT_KILL_APP);*/
 
     }
 
@@ -81,9 +115,9 @@ public class AlarmReceiver extends BroadcastReceiver {
         mAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         // Put Reminder ID in Intent Extra
-        Intent intent1 = new Intent(context, AlarmReceiver.class);
-        intent1.putExtra(EditReminderActivity.EXTRA_REMINDER_ID, Integer.toString(ID));
-        mPendingIntent = PendingIntent.getBroadcast(context, ID, intent1, PendingIntent.FLAG_CANCEL_CURRENT);
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        //intent.putExtra(EditReminderActivity.EXTRA_REMINDER_ID, Integer.toString(ID));
+        mPendingIntent = PendingIntent.getBroadcast(context, ID, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         // Calculate notification timein
         Calendar c = Calendar.getInstance();
@@ -94,16 +128,23 @@ public class AlarmReceiver extends BroadcastReceiver {
         mAlarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME,
                 SystemClock.elapsedRealtime() + diffTime,
                 mRepeatTime , mPendingIntent);
+        // Restart alarm if device is rebooted
+        /*ComponentName receiver = new ComponentName(context, BootReceiver.class);
+        PackageManager pm = context.getPackageManager();
+        pm.setComponentEnabledSetting(receiver,
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                PackageManager.DONT_KILL_APP);*/
+
 
     }
     public void cancelAlarm(Context context, int ID) {
         mAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        // Cancel Alarm using Reminder ID
+       // Cancel Alarm using Reminder ID
         mPendingIntent = PendingIntent.getBroadcast(context, ID, new Intent(context, AlarmReceiver.class), 0);
         mAlarmManager.cancel(mPendingIntent);
 
-        // Disable alarm
+       // Disable alarm
         ComponentName receiver = new ComponentName(context, AlarmReceiver.class);
         PackageManager pm = context.getPackageManager();
         pm.setComponentEnabledSetting(receiver,

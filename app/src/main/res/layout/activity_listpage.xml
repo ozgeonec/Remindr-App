@@ -16,14 +16,48 @@
             app:titleTextColor="@color/colorAccent"
             app:titleTextAppearance="@style/MyTextTitle"
             app:title="@string/app_name"
-            app:titleMarginStart="135dp"
+            app:titleMarginStart="90dp"
             android:theme="@style/ToolbarTheme"/>
+
+    <TextView
+            android:id="@+id/activeReminders"
+            android:layout_marginTop="60dp"
+            android:layout_marginLeft="140dp"
+            android:text="0"
+            style="@style/Numbers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    <TextView
+            android:id="@+id/activeRemindersText"
+            android:layout_marginTop="104dp"
+            android:layout_marginLeft="130dp"
+            android:text="Active"
+            style="@style/dark2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    <TextView
+            android:id="@+id/finishedReminders"
+            android:layout_marginTop="60dp"
+            android:layout_marginLeft="230dp"
+            android:layout_width="wrap_content"
+            android:text="0"
+            style="@style/Numbers"
+            android:layout_height="wrap_content"/>
+    <TextView
+            android:id="@+id/finishedRemindersText"
+            android:layout_marginTop="104dp"
+            android:layout_marginLeft="215dp"
+            android:text="Finished"
+            style="@style/dark2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
     <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_height="550dp"
+            android:layout_height="match_parent"
             android:layout_below="@+id/toolbar"
-            android:id="@+id/reminderList"/>
+            android:id="@+id/reminderList"
+            android:layout_marginTop="70dp"/>
     <TextView
             android:id="@+id/no_reminder_text"
             android:layout_width="match_parent"
@@ -42,4 +76,5 @@
             android:src="@drawable/logo"
             android:contentDescription="@string/addReminder"
             android:clickable="true"/>
+
 </RelativeLayout>
