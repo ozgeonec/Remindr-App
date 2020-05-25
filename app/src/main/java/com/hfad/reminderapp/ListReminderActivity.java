@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.SparseIntArray;
 import android.view.*;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
@@ -138,11 +139,6 @@ public class ListReminderActivity extends AppCompatActivity {
 
     /*protected int getDefaultItemCount() {
         return 100;
-    }*/
-  /*  @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return true;
     }*/
 
     public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.VerticalItemHolder> {
@@ -325,9 +321,9 @@ public class ListReminderActivity extends AppCompatActivity {
                                         }
                                         return true;
                                     case R.id.edit_reminder:
+                                        mTempPost = mList.getChildAdapterPosition(itemView);
                                         int mReminderClickID = IDmap.get(mTempPost);
                                         selectReminder(mReminderClickID);
-
                                         return true;
                                     case R.id.share:
                                         mMultiSelector.setSelected(getAdapterPosition(),0,true);
@@ -361,15 +357,7 @@ public class ListReminderActivity extends AppCompatActivity {
                                         mMultiSelector.clearSelections();
                                         // Recreate the recycler items
                                         // This is done to remap the item and reminder ids
-                                       /* if(newReminderCount!=0){
-                                            newReminderCount--;
-                                            newReminderCountText = Integer.toString(newReminderCount);
-                                            reminderCountView.setText(newReminderCountText);
-                                        }else{
-                                            newReminderCount--;
-                                            newReminderCountText = Integer.toString(newReminderCount);
-                                            reminderCountView.setText(newReminderCountText);
-                                        }*/
+
                                         if(oldReminderCount<=20){
                                             oldReminderCount++;
                                             oldReminderCountText = Integer.toString(oldReminderCount);
@@ -414,7 +402,6 @@ public class ListReminderActivity extends AppCompatActivity {
                mTempPost = mList.getChildAdapterPosition(v);
                int mReminderClickID = IDmap.get(mTempPost);
                selectReminder(mReminderClickID);
-
             }
 
             // Set reminder title view

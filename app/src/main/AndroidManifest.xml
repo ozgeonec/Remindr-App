@@ -25,7 +25,7 @@
             </intent-filter>
         </activity>
         <receiver android:name=".AlarmReceiver" android:process=":remote" />
-       <!-- <receiver android:name=".BootReceiver" android:process=":remote" />-->
+        <receiver android:name=".BootReceiver" android:process=":remote" />
         <activity android:name=".AddReminderActivity"/>
         <activity android:name=".EditReminderActivity"/>
     </application>

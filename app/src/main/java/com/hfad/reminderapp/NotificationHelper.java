@@ -9,11 +9,17 @@ import android.os.Build;
 import androidx.core.app.NotificationCompat;
 
 import static androidx.core.content.ContextCompat.getSystemService;
+import static com.hfad.reminderapp.EditReminderActivity.EXTRA_REMINDER_ID;
+
 
 /**
  * @author ozgeonec
  */
 public class NotificationHelper extends ContextWrapper{
+    private int receivedID;
+    private RemindrDatabase rb;
+    private Reminder receivedReminder;
+    private AlarmReceiver alarmReceiver;
     public static final String channelID = "channelID";
     public static final String channelName = "Channel Name";
     private NotificationManager notificationManager;
@@ -41,8 +47,11 @@ public class NotificationHelper extends ContextWrapper{
         Reminder reminder = rb.getReminder(1);
         String mTitle = reminder.getTitle();
         return new NotificationCompat.Builder(getApplicationContext(), channelID)
-                .setContentTitle("Scheduled Alert")
+                .setContentTitle(mTitle)
                 .setContentText("Your Alert is Ringing")
-                .setSmallIcon(R.drawable.bell);
+                .setOnlyAlertOnce(true)
+                .setSmallIcon(R.drawable.bell)
+                .setOngoing(false)
+                .setAutoCancel(true);
     }
 }

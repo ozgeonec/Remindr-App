@@ -273,6 +273,7 @@ public class EditReminderActivity extends AppCompatActivity {
         receivedReminder.setRepeatNmbr(mRepeatNmbr);
         receivedReminder.setRepeatType(mRepeatType);
         receivedReminder.setTagType(mTag);
+        receivedReminder.setID(receivedID);
         // Updating Reminder
         rb.updateReminder(receivedReminder);
 
@@ -295,12 +296,7 @@ public class EditReminderActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
     }
-    // Creating the menu
-   /* @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_add_reminder, menu);
-        return true;
-    }*/
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // On clicking the back arrow
