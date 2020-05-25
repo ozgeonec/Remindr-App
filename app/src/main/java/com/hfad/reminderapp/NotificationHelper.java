@@ -44,7 +44,7 @@ public class NotificationHelper extends ContextWrapper{
     }
     public NotificationCompat.Builder getChannelNotification() {
         RemindrDatabase rb = new RemindrDatabase(getApplicationContext());
-        Reminder reminder = rb.getReminder(1);
+        Reminder reminder = rb.getReminder(5);
         String mTitle = reminder.getTitle();
         return new NotificationCompat.Builder(getApplicationContext(), channelID)
                 .setContentTitle(mTitle)

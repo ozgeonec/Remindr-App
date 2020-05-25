@@ -11,8 +11,10 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.os.Vibrator;
+import android.util.Log;
 import android.widget.Toast;
 import androidx.core.app.NotificationCompat;
 import java.util.Calendar;
@@ -29,7 +31,60 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        
+        Toast.makeText(context,"Saved",Toast.LENGTH_SHORT).show();
+        Log.i("Bilgi", "kuruldu");
+        System.out.println(intent.getStringExtra(EditReminderActivity.EXTRA_REMINDER_ID));
+        int mReceivedID = Integer.parseInt(intent.getStringExtra(EditReminderActivity.EXTRA_REMINDER_ID));
+
+        // Get notification title from Reminder Database
+        RemindrDatabase rb = new RemindrDatabase(context);
+        Reminder reminder = rb.getReminder(mReceivedID);
+        String mTitle = reminder.getTitle();
+
+        // Create intent to open ReminderEditActivity on notification click
+        Intent editIntent = new Intent(context, EditReminderActivity.class);
+        editIntent.putExtra(EditReminderActivity.EXTRA_REMINDER_ID, Integer.toString(mReceivedID));
+        PendingIntent mClick = PendingIntent.getActivity(context, mReceivedID, editIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationHelper notificationHelper = new NotificationHelper(context);
+        NotificationCompat.Builder nb = notificationHelper.getChannelNotification();
+        notificationHelper.getManager().notify(mReceivedID, nb.build());
+        Notification notification = nb.build();
+
+        //notification.defaults |= Notification.DEFAULT_VIBRATE;
+        //notification.defaults |= Notification.DEFAULT_SOUND;
+        Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        if (vibrator != null) {
+            vibrator.vibrate(12000);
+        }
+        Uri alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        Ringtone ring = RingtoneManager.getRingtone(context, alert);
+
+        if(ring == null){
+
+            alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            ring = RingtoneManager.getRingtone(context, alert);
+
+            if(ring == null){
+                alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+                ring = RingtoneManager.getRingtone(context, alert);
+            }
+        }
+
+        if(ring != null){
+            ring.play();
+        }
+        final Handler handler = new Handler();
+        final Ringtone finalRing = ring;
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // Do something after 5s = 5000ms
+                if(finalRing != null){
+                    finalRing.stop();
+                }
+            }
+        }, 12000);
 
        /*NotificationHelper notificationHelper = new NotificationHelper(context);
         NotificationCompat.Builder nb = notificationHelper.getChannelNotification();
@@ -58,7 +113,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         if(ring != null){
             ring.play();
         }*/
-        Toast.makeText(context, "Intent Detected.", Toast.LENGTH_LONG).show();
+       /* Toast.makeText(context, "Intent Detected.", Toast.LENGTH_LONG).show();
       int mReceivedID = Integer.parseInt(intent.getStringExtra(EditReminderActivity.EXTRA_REMINDER_ID));
 
         // Get notification title from Reminder Database
@@ -84,7 +139,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         NotificationManager nManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         assert nManager != null;
-        nManager.notify(mReceivedID, mBuilder.build());
+        nManager.notify(mReceivedID, mBuilder.build());*/
 
     }
 
@@ -94,7 +149,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         // Put Reminder ID in Intent Extra
         Intent intent = new Intent(context, AlarmReceiver.class);
         intent.putExtra(EditReminderActivity.EXTRA_REMINDER_ID, Integer.toString(ID));
-        mPendingIntent = PendingIntent.getBroadcast(context, ID, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        mPendingIntent = PendingIntent.getBroadcast(context, ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Calculate notification time
         Calendar c = Calendar.getInstance();
@@ -106,12 +161,12 @@ public class AlarmReceiver extends BroadcastReceiver {
                 SystemClock.elapsedRealtime() + diffTime,
                 mPendingIntent);
 
-         // Restart alarm if device is rebooted
+       /*  // Restart alarm if device is rebooted
         ComponentName receiver = new ComponentName(context, BootReceiver.class);
         PackageManager pm = context.getPackageManager();
         pm.setComponentEnabledSetting(receiver,
                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                PackageManager.DONT_KILL_APP);
+                PackageManager.DONT_KILL_APP);*/
 
 
     }
@@ -122,7 +177,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         // Put Reminder ID in Intent Extra
         Intent intent = new Intent(context, AlarmReceiver.class);
         intent.putExtra(EditReminderActivity.EXTRA_REMINDER_ID, Integer.toString(ID));
-        mPendingIntent = PendingIntent.getBroadcast(context, ID, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        mPendingIntent = PendingIntent.getBroadcast(context, ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Calculate notification timein
         Calendar c = Calendar.getInstance();
@@ -133,12 +188,12 @@ public class AlarmReceiver extends BroadcastReceiver {
         mAlarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME,
                 SystemClock.elapsedRealtime() + diffTime,
                 mRepeatTime , mPendingIntent);
-        // Restart alarm if device is rebooted
+      /*  // Restart alarm if device is rebooted
         ComponentName receiver = new ComponentName(context, BootReceiver.class);
         PackageManager pm = context.getPackageManager();
         pm.setComponentEnabledSetting(receiver,
                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                PackageManager.DONT_KILL_APP);
+                PackageManager.DONT_KILL_APP);*/
 
 
     }
