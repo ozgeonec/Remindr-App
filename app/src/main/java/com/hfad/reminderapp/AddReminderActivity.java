@@ -26,7 +26,6 @@ import androidx.appcompat.widget.Toolbar;
 import java.util.Calendar;
 import java.util.Objects;
 
-import static com.hfad.reminderapp.SettingsActivity.vibrationKey;
 
 
 public class AddReminderActivity extends AppCompatActivity {
@@ -59,7 +58,7 @@ public class AddReminderActivity extends AppCompatActivity {
     private Switch repeatSwitch;
     private TextView everyText;
     private Calendar mCalendar;
-    private TextView settingsText;
+
 
     // Constant values in milliseconds
     private static final long milMinute = 60000L;

@@ -44,6 +44,7 @@ public class BootReceiver extends BroadcastReceiver {
             List<Reminder> reminders = rb.getAllReminders();
 
             for (Reminder rm : reminders) {
+                mTitle = rm.getTitle();
                 mReceivedID = rm.getID();
                 mRepeat = rm.getRepeat();
                 mRepeatNo = rm.getRepeatNmbr();

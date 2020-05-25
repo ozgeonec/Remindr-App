@@ -37,6 +37,9 @@ public class NotificationHelper extends ContextWrapper{
         return notificationManager;
     }
     public NotificationCompat.Builder getChannelNotification() {
+        RemindrDatabase rb = new RemindrDatabase(getApplicationContext());
+        Reminder reminder = rb.getReminder(1);
+        String mTitle = reminder.getTitle();
         return new NotificationCompat.Builder(getApplicationContext(), channelID)
                 .setContentTitle("Scheduled Alert")
                 .setContentText("Your Alert is Ringing")

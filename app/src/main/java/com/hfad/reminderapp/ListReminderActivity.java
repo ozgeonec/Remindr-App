@@ -178,7 +178,6 @@ public class ListReminderActivity extends AppCompatActivity {
             if (mItems.isEmpty()) return;
             mItems.remove(selected);
             notifyItemRemoved(selected);
-
         }
 
         // View holder for recycler view items
@@ -305,19 +304,11 @@ public class ListReminderActivity extends AppCompatActivity {
                                                 mAdapter.removeItemSelected(i);
                                                 // Delete reminder alarm
                                                 mAlarmReceiver.cancelAlarm(getApplicationContext(), id);
-                                                if(newReminderCount!=0){
-                                                    newReminderCount--;
-                                                    newReminderCountText = Integer.toString(newReminderCount);
-                                                    reminderCountView.setText(newReminderCountText);
-                                                }else{
-                                                    newReminderCount--;
-                                                    newReminderCountText = Integer.toString(newReminderCount);
-                                                    reminderCountView.setText(newReminderCountText);
-                                                }
+
                                             }
                                         }
                                         // Clear selected items in recycler view
-                                        mMultiSelector.clearSelections();
+                                        //mMultiSelector.clearSelections();
                                         // Recreate the recycler items
                                         // This is done to remap the item and reminder ids
                                         mAdapter.onDeleteItem(100);
@@ -370,7 +361,7 @@ public class ListReminderActivity extends AppCompatActivity {
                                         mMultiSelector.clearSelections();
                                         // Recreate the recycler items
                                         // This is done to remap the item and reminder ids
-                                        if(newReminderCount!=0){
+                                       /* if(newReminderCount!=0){
                                             newReminderCount--;
                                             newReminderCountText = Integer.toString(newReminderCount);
                                             reminderCountView.setText(newReminderCountText);
@@ -378,7 +369,7 @@ public class ListReminderActivity extends AppCompatActivity {
                                             newReminderCount--;
                                             newReminderCountText = Integer.toString(newReminderCount);
                                             reminderCountView.setText(newReminderCountText);
-                                        }
+                                        }*/
                                         if(oldReminderCount<=20){
                                             oldReminderCount++;
                                             oldReminderCountText = Integer.toString(oldReminderCount);
@@ -448,33 +439,34 @@ public class ListReminderActivity extends AppCompatActivity {
                 tagDisplay.setText(tagType);
                 int color;
                 if (tagType.equals("Birthday")) {
-                    color = Color.YELLOW;
+                    color = Color.
+                            rgb(237,218,18);
                     mDrawableBuilder = TextDrawable.builder()
-                            .buildRound(String.valueOf(mTitleText).substring(0,1),color);
+                            .buildRound(tagType.substring(0,1),color);
                     mThumbnailImage.setImageDrawable(mDrawableBuilder);
                 }
                 else if(tagType.equals("Work")){
                     color = Color.CYAN;
                     mDrawableBuilder = TextDrawable.builder()
-                            .buildRound(String.valueOf(mTitleText).substring(0,1),color);
+                            .buildRound(tagType.substring(0,1),color);
                     mThumbnailImage.setImageDrawable(mDrawableBuilder);
                 }
                 else if(tagType.equals("General")){
-                    color = Color.GREEN;
+                    color = Color.rgb(164,198,57);
                     mDrawableBuilder = TextDrawable.builder()
-                            .buildRound(String.valueOf(mTitleText).substring(0,1),color);
+                            .buildRound(tagType.substring(0,1),color);
                     mThumbnailImage.setImageDrawable(mDrawableBuilder);
                 }
                 else if(tagType.equals("Personal")){
-                    color = Color.MAGENTA;
+                    color = Color.rgb(162,57,198);
                     mDrawableBuilder = TextDrawable.builder()
-                            .buildRound(String.valueOf(mTitleText).substring(0,1),color);
+                            .buildRound(tagType.substring(0,1),color);
                     mThumbnailImage.setImageDrawable(mDrawableBuilder);
                 }
                 else if(tagType.equals("Health")){
-                    color = Color.BLUE;
+                    color = Color.rgb(57,198,162);
                     mDrawableBuilder = TextDrawable.builder()
-                            .buildRound(String.valueOf(mTitleText).substring(0,1),color);
+                            .buildRound(tagType.substring(0,1),color);
                     mThumbnailImage.setImageDrawable(mDrawableBuilder);
                 }
             }
